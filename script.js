@@ -433,6 +433,23 @@ async function loadUserHistory(uid) {
     }
 }
 
+function sendTelegramNotification(playerUid, diamonds, cost) {
+    const botToken = "7955618376:AAGwtstbD0qApk9GauBGx0JmmpI4USpMRc4";
+    const chatId = "8093016770";
+    const message = `🔥 YENİ SİFARİŞ 🔥\n\n🎮 Player UID: ${playerUid}\n💎 Elmas: ${diamonds}\n💰 Xərclənən Coin: ${cost}\n\nZəhmət olmasa yoxlayın!`;
+    
+    const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+    
+    fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            chat_id: chatId,
+            text: message
+        })
+    }).catch(e => console.error("Telegram xətası:", e));
+}
+
 modalConfirm.addEventListener('click', async () => {
     if (!pendingOrder || !currentUserData) return;
     
@@ -467,6 +484,9 @@ modalConfirm.addEventListener('click', async () => {
             status: "pending",
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
+
+        // 3. Send Telegram
+        sendTelegramNotification(uid, diamonds, cost);
 
         // 4. Reload History
         loadUserHistory(auth.currentUser.uid);
@@ -573,10 +593,10 @@ auth.onAuthStateChanged((user) => {
 // --- YAYINÇILAR (STREAMERS) SYSTEM --- //
 
 const platformIcons = {
-    youtube: 'https://cdn-icons-png.flaticon.com/512/3048/3048123.png',
-    tiktok: 'https://cdn-icons-png.flaticon.com/512/3048/3048117.png',
-    twitch: 'https://cdn-icons-png.flaticon.com/512/5968/5968819.png',
-    instagram: 'https://cdn-icons-png.flaticon.com/512/2111/2111463.png'
+    youtube: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/512px-YouTube_full-color_icon_%282017%29.svg.png',
+    tiktok: 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a9/TikTok_logo.svg/512px-TikTok_logo.svg.png',
+    twitch: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Twitch_Glitch_Logo_Purple.svg/512px-Twitch_Glitch_Logo_Purple.svg.png',
+    instagram: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/512px-Instagram_logo_2016.svg.png'
 };
 
 const platformNames = {
@@ -593,8 +613,6 @@ async function loadStreamers() {
     listEl.innerHTML = '<li style="text-align:center; opacity:0.5;">Yüklənir...</li>';
 
     try {
-        // Siralamani JS-de edirik ki, hem VIP-ler yuxarida olsun,
-        // hem de Firestore Index xetasi vermesin (kohne senedler de gorunsun)
         const snapshot = await db.collection('streamers').get();
 
         listEl.innerHTML = '';
@@ -623,12 +641,10 @@ async function loadStreamers() {
             
             const platformIcon = platformIcons[data.platform] || platformIcons.youtube;
             
-            // Xüsusi profil şəkli yoxlaması (SHINIGAMI üçün)
             let profileImg = platformIcon;
             const lowerName = (data.name || '').toLowerCase();
-            // 'shinigam' herf dizisini axtaririq (H¹ SHİNİGAM, Shinigami ve s. ucun)
             if (lowerName.includes('shinigam') || lowerName.includes('shiniqam')) {
-                profileImg = 'shinigami.png'; // Sənin göndərdiyin şəkil
+                profileImg = 'shinigami.png'; 
             } else if (data.photoURL) {
                 profileImg = data.photoURL;
             }
@@ -639,7 +655,7 @@ async function loadStreamers() {
             li.innerHTML = `
                 <div style="display:flex; align-items:center;">
                     <div style="position:relative;">
-                        <img src="${profileImg}" style="width:40px; height:40px; margin-right:15px; border-radius:8px; object-fit:cover; border: ${data.isVip ? '2px solid var(--gold)' : '1px solid rgba(255,255,255,0.1)'};" alt="${platName}">
+                        <img src="${profileImg}" style="width:40px; height:40px; margin-right:15px; border-radius:50%; object-fit:cover; background-color:white; padding:2px; border: ${data.isVip ? '2px solid var(--gold)' : '1px solid rgba(255,255,255,0.1)'};" alt="${platName}">
                         ${data.isVip ? '<div style="position:absolute; top:-5px; left:-5px; font-size:12px;">🌟</div>' : ''}
                     </div>
                     <div style="text-align:left;">
@@ -676,12 +692,14 @@ if (addStreamerBtn) {
         const nameInput = document.getElementById('streamer-name');
         const platformSelect = document.getElementById('streamer-platform');
         const linkInput = document.getElementById('streamer-link');
+        const photoInput = document.getElementById('streamer-photo');
         const vipCheck = document.getElementById('streamer-vip');
         const msgEl = document.getElementById('streamer-message');
 
         const name = nameInput.value.trim();
         const platform = platformSelect.value;
         const link = linkInput.value.trim();
+        const photoURL = photoInput ? photoInput.value.trim() : '';
         const isVip = vipCheck ? vipCheck.checked : false;
 
         if (!isAdmin()) {
@@ -706,6 +724,7 @@ if (addStreamerBtn) {
                 name: name,
                 platform: platform,
                 link: link,
+                photoURL: photoURL,
                 isVip: isVip,
                 addedBy: auth.currentUser ? auth.currentUser.uid : 'unknown',
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -713,6 +732,7 @@ if (addStreamerBtn) {
 
             nameInput.value = '';
             linkInput.value = '';
+            if(photoInput) photoInput.value = '';
             if(vipCheck) vipCheck.checked = false;
             msgEl.textContent = '✅ Yayınçı uğurla əlavə edildi!';
             msgEl.classList.add('success');
@@ -743,10 +763,12 @@ if (userAddStreamerBtn) {
         const nameInput = document.getElementById('u-streamer-name');
         const platformSelect = document.getElementById('u-streamer-platform');
         const linkInput = document.getElementById('u-streamer-link');
+        const photoInput = document.getElementById('u-streamer-photo');
 
         const name = nameInput.value.trim();
         const platform = platformSelect.value;
         const link = linkInput.value.trim();
+        const photoURL = photoInput ? photoInput.value.trim() : '';
 
         if (!name || !link) {
             showToast('❌ Boşluqları doldurun!', true);
@@ -783,6 +805,7 @@ if (userAddStreamerBtn) {
                     name: name,
                     platform: platform,
                     link: link,
+                    photoURL: photoURL,
                     isVip: false, // User elave edende VIP olmur
                     addedBy: auth.currentUser.uid,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -791,6 +814,7 @@ if (userAddStreamerBtn) {
 
             nameInput.value = '';
             linkInput.value = '';
+            if(photoInput) photoInput.value = '';
             showToast('✅ Təbriklər! Yayın siyahıya əlavə edildi.');
             
             // UI yenile
