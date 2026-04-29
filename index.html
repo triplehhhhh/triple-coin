@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tripl H Coin | Pulsuz Coin və Elmas</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Tripl H Coin platforması. Oyun oynayaraq, kodlar taparaq Coin toplayın və həmin Coinləri Free Fire elmaslarına (Diamonds) çevirin. Qeydiyyatdan keçin və qazanmağa başlayın!">
+    <meta name="keywords" content="tripl coin, tripl h coin, tripl coin sayti, oyun coin, pulsuz elmas, free fire elmas, elmas hilesi, diamond qazan, free shop">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Tripl H Coin">
+    
+    <!-- Open Graph for Social Media sharing -->
+    <meta property="og:title" content="Tripl H Coin - Oyunçu Mağazası">
+    <meta property="og:description" content="Mükəmməl dizaynlı Tripl H Coin saytına qoşul, coinlər toplayıb hesabına Free Fire elmasları göndər!">
+    <meta property="og:type" content="website">
+
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="watermark-bg">T</div>
+    <div class="container">
+        
+        <!-- Auth View -->
+        <div id="auth-view" class="view active">
+            <div class="glass-card">
+                <h1 class="glow-text">Tripl H Coin</h1>
+                <p style="text-align:center; margin-bottom: 25px;">Platformaya daxil olun</p>
+                
+                <!-- GOOGLE SIGN IN -->
+                <button id="google-login-btn" class="google-btn">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" alt="Google" style="width:22px;">
+                    <span>Google ilə Daxil Ol</span>
+                </button>
+                <div id="google-login-status" style="display:none; text-align:center; margin-top:12px; color:var(--primary); font-size:0.85rem;">Gözləyin...</div>
+                <div id="google-login-error" class="error-text"></div>
+
+                <div class="auth-divider">
+                    <span>və ya</span>
+                </div>
+
+                <!-- LOGIN FORM -->
+                <form id="login-form">
+                    <div class="input-group">
+                        <label for="login-email">E-mail</label>
+                        <input type="email" id="login-email" required placeholder="example@gmail.com">
+                    </div>
+                    <div class="input-group">
+                        <label for="login-password">Şifrə</label>
+                        <input type="password" id="login-password" required placeholder="********">
+                    </div>
+                    <button type="submit" class="primary-btn" id="login-btn">Daxil Ol</button>
+                    <div id="login-status" style="display:none; text-align:center; margin-top:10px; color:var(--primary);">Gözləyin...</div>
+                    <div id="login-error" class="error-text"></div>
+                    
+                    <p style="margin-top: 20px; font-size: 0.85rem;">Hesabınız yoxdur? <span id="link-register" style="color: var(--primary); cursor: pointer; font-weight: bold;">Sign up</span></p>
+                </form>
+
+                <!-- REGISTER FORM -->
+                <form id="register-form" style="display: none;">
+                    <div class="input-group">
+                        <label for="reg-email">Yeni E-mail</label>
+                        <input type="email" id="reg-email" required placeholder="example@gmail.com">
+                    </div>
+                    <div class="input-group">
+                        <label for="reg-password">Yeni Şifrə (Ən azı 6 simvol)</label>
+                        <input type="password" id="reg-password" required minlength="6" placeholder="********">
+                    </div>
+                    <button type="submit" class="primary-btn" id="register-btn" style="background-color: var(--secondary);">Təsdiqlə</button>
+                    <div id="reg-status" style="display:none; text-align:center; margin-top:10px; color:var(--primary);">Hesab Yaradılır... (Gözləyin)</div>
+                    <div id="reg-error" class="error-text"></div>
+                    
+                    <p style="margin-top: 20px; font-size: 0.85rem;">Artıq hesabınız var? <span id="link-login" style="color: var(--primary); cursor: pointer; font-weight: bold;">Sign in</span></p>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dashboard View -->
+        <div id="dashboard-view" class="view" style="padding-bottom: 70px;">
+            <header class="app-header glass-card">
+                <h2>Tripl H Coin</h2>
+                <div class="user-info">
+                    <span id="user-id-display">ID: #0000</span>
+                    <button id="logout-btn" class="text-btn">Çıxış</button>
+                </div>
+            </header>
+
+            <!-- TAB 1: COIN -->
+            <div id="tab-coin" class="section-view active">
+                <div class="stats-grid">
+                    <div class="stat-card glass-card">
+                        <h3>Coin Balansı</h3>
+                        <div class="stat-value text-gold" id="coin-balance">0</div>
+                        <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin" class="stat-icon">
+                    </div>
+                    <div class="stat-card glass-card shadow-blue">
+                        <h3>Elmas</h3>
+                        <div class="stat-value text-blue" id="diamond-balance">0</div>
+                        <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="diamond" class="stat-icon">
+                    </div>
+                </div>
+
+                <div class="dashboard-actions">
+                    <!-- Converter Section -->
+                    <div class="action-card glass-card">
+                        <h3>🔄 Elmas Hesablayıcı</h3>
+                        <p>Coinlərinizin neçə elmas etdiyinə baxın. (10 Coin = 1 Elmas)</p>
+                        <div class="input-row">
+                            <input type="number" id="convert-coin-input" placeholder="Coin miqdarı (Məs: 4500)" autocomplete="off">
+                            <input type="text" id="convert-diamond-output" placeholder="= 0 Elmas" disabled style="background: rgba(0,0,0,0.5); width: 40%; text-align: center; color: var(--secondary); font-weight: bold;">
+                        </div>
+                    </div>
+
+                    <!-- Redeem Code Section -->
+                    <div class="action-card glass-card">
+                        <h3>Redeem Kod</h3>
+                        <p>Coin qazanmaq üçün xüsusi kodu bura yazın.</p>
+                        <div class="input-row">
+                            <input type="text" id="redeem-code-input" placeholder="Kodu daxil edin" autocomplete="off">
+                            <button id="redeem-btn" class="primary-btn">Təsdiqlə</button>
+                        </div>
+                        <div id="redeem-message"></div>
+                    </div>
+
+                    <!-- Go to Freeshop -->
+                    <div class="action-card glass-card">
+                        <h3>Diamond <span class="badge">Yeni</span></h3>
+                        <p>Yığdığınız Coin-lər ilə Elmas ala bilərsiniz.</p>
+                        <button id="go-freeshop-btn" class="secondary-btn">Diamond'a Keçid</button>
+                    </div>
+
+                    <!-- Order History Section -->
+                    <div class="action-card glass-card" style="margin-top: 20px;">
+                        <h3>📜 Sifariş Tarixçəsi</h3>
+                        <div id="order-history-list" style="margin-top: 15px; max-height: 250px; overflow-y: auto; text-align: left;">
+                            <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">Yüklənir...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Duelo Section -->
+                <div class="duelo-section action-card glass-card">
+                    <h3>⚔️ Düello (VS)</h3>
+                    <p>Digər oyunçularla rəqabətə girərək coinlərinizi artırın!</p>
+                    <button class="primary-btn" style="background: rgba(255,50,50,0.8); margin-top:10px;" onclick="showToast('Bu funksiya tezliklə aktiv olacaq!', true)">Rəqib Axtar</button>
+                </div>
+
+                <!-- Leaderboard Section -->
+                <div class="action-card glass-card" style="margin-top: 20px;">
+                    <h3>🏆 Coin Sıralaması</h3>
+                    <p style="font-size: 0.8rem; opacity: 0.7;">Ən çox coin toplayan istifadəçilər</p>
+                    <ul class="leaderboard-list" id="leaderboard-list">
+                        <li style="text-align: center; opacity: 0.5;">Yüklənir...</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- TAB 2: KLANLAR -->
+            <div id="tab-clans" class="section-view">
+                <!-- Klan Siyahısı -->
+                <div class="action-card glass-card" style="margin-top:16px;">
+                    <h3>🛡️ Mövcud Klanlar</h3>
+                    <p>Bir klana qatıl və ya öz klanına bax.</p>
+                    <ul class="clan-list" id="clan-list">
+                        <li style="text-align:center; opacity:0.5;">Yüklənir...</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- TAB 3: TURNUVA -->
+            <div id="tab-tournaments" class="section-view">
+                <div class="tournament-card">
+                    <h2>🔫 BR Ödüllü Oda</h2>
+                    <p>Böyük xəritədə döyüş və mükafatlar qazan!</p>
+                    <div style="background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px; margin: 10px 0;">
+                        Oda ID: <strong class="text-gold">Şənbə Günü</strong><br>
+                        Şifrə: <strong class="text-gold">Gizlidir</strong>
+                    </div>
+                    <button class="primary-btn" style="background:#00d084;" onclick="showToast('Turnir hələ başlamayıb!', true)">Qeydiyyatdan Keç</button>
+                </div>
+
+                <div class="tournament-card parkour">
+                    <h2>🏃 Parkur Ödüllü Oda</h2>
+                    <p>Maneələri aş, birinci ol və coinləri topla!</p>
+                    <div style="background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px; margin: 10px 0;">
+                        Oda ID: <strong class="text-gold">Bazar Günü</strong><br>
+                        Şifrə: <strong class="text-gold">Gizlidir</strong>
+                    </div>
+                    <button class="primary-btn" style="background:#00d084;" onclick="showToast('Turnir hələ başlamayıb!', true)">Qeydiyyatdan Keç</button>
+                </div>
+            </div>
+
+            <!-- TAB 4: YAYINÇILAR -->
+            <div id="tab-streamers" class="section-view">
+                <div class="action-card glass-card">
+                    <h3>🎥 Yayınçılar</h3>
+                    <p>Platforma yayınçılarını izlə və xüsusi kodlar qazan.</p>
+                    <ul class="streamer-list" id="streamer-list">
+                        <li style="text-align:center; opacity:0.5;">Yüklənir...</li>
+                    </ul>
+                </div>
+
+                <!-- User: Reklam Ver (5000 Coin) -->
+                <div class="action-card glass-card" id="user-add-streamer-section" style="margin-top:16px; border: 1px solid var(--secondary);">
+                    <h3>🚀 Öz Yayınını Əlavə Et</h3>
+                    <p>Cəmi <strong class="text-gold">5000 Coin</strong> ödəyərək kanalını bu siyahıya əlavə et!</p>
+                    <div class="input-group">
+                        <label for="u-streamer-name">Kanal Adın</label>
+                        <input type="text" id="u-streamer-name" placeholder="Məs: MyChannel" autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                        <label for="u-streamer-platform">Platforma</label>
+                        <select id="u-streamer-platform" style="width:100%; padding:14px 16px; border:1px solid rgba(255,255,255,0.08); border-radius:12px; background:rgba(255,255,255,0.04); color:#e8e8f0; font-family:'Outfit',sans-serif; outline:none;">
+                            <option value="youtube">YouTube</option>
+                            <option value="tiktok">TikTok</option>
+                            <option value="twitch">Twitch</option>
+                            <option value="instagram">Instagram</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="u-streamer-link">Kanal Linki</label>
+                        <input type="url" id="u-streamer-link" placeholder="https://..." autocomplete="off">
+                    </div>
+                    <button class="primary-btn" id="user-add-streamer-btn">Yayınımı Əlavə Et (-5000 🪙)</button>
+                </div>
+
+                <!-- Admin: Yayınçı Əlavə Et -->
+                <div class="action-card glass-card" id="add-streamer-section" style="margin-top:16px; display: none; border: 1px solid var(--gold);">
+                    <h3>👑 Admin: Yayınçı İdarəsi</h3>
+                    <p>Yayınçı əlavə et (Pulsuz və VIP seçimi ilə).</p>
+                    <div class="input-group">
+                        <label for="streamer-name">Yayınçı Adı</label>
+                        <input type="text" id="streamer-name" placeholder="Məs: GamerBoy" autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                        <label for="streamer-platform">Platforma</label>
+                        <select id="streamer-platform" style="width:100%; padding:14px 16px; border:1px solid rgba(255,255,255,0.08); border-radius:12px; background:rgba(255,255,255,0.04); color:#e8e8f0; font-family:'Outfit',sans-serif; outline:none;">
+                            <option value="youtube">YouTube</option>
+                            <option value="tiktok">TikTok</option>
+                            <option value="twitch">Twitch</option>
+                            <option value="instagram">Instagram</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="streamer-link">Kanal Linki</label>
+                        <input type="url" id="streamer-link" placeholder="https://..." autocomplete="off">
+                    </div>
+                    <div class="input-group" style="display:flex; align-items:center; gap:10px;">
+                        <input type="checkbox" id="streamer-vip" style="width:18px; height:18px; accent-color:var(--gold);">
+                        <label for="streamer-vip" style="margin:0; color:var(--gold); font-weight:bold; cursor:pointer;">VIP Üye (Başda görünsün)</label>
+                    </div>
+                    <button class="primary-btn" id="add-streamer-btn" style="background: var(--gold); color: #000;">Yayınçını Əlavə Et</button>
+                    <div id="streamer-message" style="margin-top:10px;"></div>
+                </div>
+            </div>
+
+            <!-- TAB 5: QAYDALAR -->
+            <div id="tab-rules" class="section-view">
+                <div class="action-card glass-card">
+                    <h3>📜 Platforma Qaydaları</h3>
+                    <div style="text-align: left; font-size: 0.9rem; line-height: 1.6; margin-top:20px;">
+                        <ol style="padding-left: 20px;">
+                            <li style="margin-bottom: 10px;"><strong>Qeydiyyat:</strong> Hər kəs yalnız 1 hesab aça bilər. Saxta hesablar (bot) banlanır.</li>
+                            <li style="margin-bottom: 10px;"><strong>Coin Qazanmaq:</strong> Coinləri oyun oynayaraq, turnirlərdə iştirak edərək və xüsusi redeem kodlarla qazanmaq mümkündür.</li>
+                            <li style="margin-bottom: 10px;"><strong>Düello:</strong> Düello (VS) atarkən bahis edilən coinlər qalibə verilir, sistemdə cüzi kəsinti ola bilər.</li>
+                            <li style="margin-bottom: 10px;"><strong>Turnirlər:</strong> Turnir şifrələrini başqaları ilə paylaşmaq qəti qadağandır. Cəzası platformadan uzaqlaşdırmadır.</li>
+                            <li style="margin-bottom: 10px;"><strong>Ödəniş:</strong> Sifariş edilmiş elmaslar UID hesabınıza qısa vaxt ərzində yüklənir. Düzgün UID daxil edilməməsi sizin məsuliyyətinizdir.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Navigation Bar -->
+            <nav class="bottom-nav">
+                <div class="nav-item active" onclick="switchMainTab('tab-coin', this)">
+                    <span>🪙</span><small>Coin</small>
+                </div>
+                <div class="nav-item" onclick="switchMainTab('tab-clans', this)">
+                    <span>🛡️</span><small>Klanlar</small>
+                </div>
+                <div class="nav-item" onclick="switchMainTab('tab-tournaments', this)">
+                    <span>🏆</span><small>Turnuva</small>
+                </div>
+                <div class="nav-item" onclick="switchMainTab('tab-streamers', this)">
+                    <span>🎥</span><small>Yayınçılar</small>
+                </div>
+                <div class="nav-item" onclick="switchMainTab('tab-rules', this)">
+                    <span>📜</span><small>Qaydalar</small>
+                </div>
+            </nav>
+        </div>
+
+        <!-- FreeShop View -->
+        <div id="freeshop-view" class="view">
+            <header class="app-header glass-card">
+                <button id="go-dashboard-btn" class="icon-btn">← Geri</button>
+                <h2>Diamond</h2>
+                <div class="user-info">
+                    Mənim Coin-lərim: <span id="shop-coin-balance" class="text-gold bold">0</span>
+                </div>
+            </header>
+
+            <div class="shop-grid">
+                <div class="shop-item glass-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="110 💎">
+                    <h3>110 Elmas</h3>
+                    <div class="price"><span>1100</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin"></div>
+                    <button class="buy-btn" data-diamonds="110" data-cost="1100">Satın Al</button>
+                </div>
+                <div class="shop-item glass-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="220 💎">
+                    <h3>220 Elmas</h3>
+                    <div class="price"><span>2200</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin"></div>
+                    <button class="buy-btn" data-diamonds="220" data-cost="2200">Satın Al</button>
+                </div>
+                <div class="shop-item glass-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="341 💎">
+                    <h3>341 Elmas</h3>
+                    <div class="price"><span>3410</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin"></div>
+                    <button class="buy-btn" data-diamonds="341" data-cost="3410">Satın Al</button>
+                </div>
+                <div class="shop-item glass-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="572 💎">
+                    <h3>572 Elmas</h3>
+                    <div class="price"><span>5720</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin"></div>
+                    <button class="buy-btn" data-diamonds="572" data-cost="5720">Satın Al</button>
+                </div>
+                <div class="shop-item glass-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="792 💎">
+                    <h3>792 Elmas</h3>
+                    <div class="price"><span>7920</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin"></div>
+                    <button class="buy-btn" data-diamonds="792" data-cost="7920">Satın Al</button>
+                </div>
+                <div class="shop-item glass-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="1166 💎">
+                    <h3>1166 Elmas</h3>
+                    <div class="price"><span>11660</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin"></div>
+                    <button class="buy-btn" data-diamonds="1166" data-cost="11660">Satın Al</button>
+                </div>
+                <div class="shop-item glass-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="1276 💎">
+                    <h3>1276 Elmas</h3>
+                    <div class="price"><span>12760</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin"></div>
+                    <button class="buy-btn" data-diamonds="1276" data-cost="12760">Satın Al</button>
+                </div>
+                <div class="shop-item glass-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="1738 💎">
+                    <h3>1738 Elmas</h3>
+                    <div class="price"><span>17380</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin"></div>
+                    <button class="buy-btn" data-diamonds="1738" data-cost="17380">Satın Al</button>
+                </div>
+                <div class="shop-item glass-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="2398 💎">
+                    <h3>2398 Elmas</h3>
+                    <div class="price"><span>23980</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin"></div>
+                    <button class="buy-btn" data-diamonds="2398" data-cost="23980">Satın Al</button>
+                </div>
+                <div class="shop-item glass-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="4796 💎">
+                    <h3>4796 Elmas</h3>
+                    <div class="price"><span>47960</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin"></div>
+                    <button class="buy-btn" data-diamonds="4796" data-cost="47960">Satın Al</button>
+                </div>
+                <div class="shop-item glass-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="6160 💎">
+                    <h3>6160 Elmas</h3>
+                    <div class="price"><span>61600</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin"></div>
+                    <button class="buy-btn" data-diamonds="6160" data-cost="61600">Satın Al</button>
+                </div>
+                <div class="shop-item glass-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="7194 💎">
+                    <h3>7194 Elmas</h3>
+                    <div class="price"><span>71940</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin"></div>
+                    <button class="buy-btn" data-diamonds="7194" data-cost="71940">Satın Al</button>
+                </div>
+            </div>
+
+            <!-- MEMBERSHIP PACKS -->
+            <h3 style="margin-top: 30px; margin-bottom: 15px; text-align: center; color: var(--primary); font-size: 1.4rem;">🌟 Xüsusi Üyelik Paketləri</h3>
+            <div class="shop-grid" style="grid-template-columns: 1fr;">
+                
+                <!-- Həftəlik Mini -->
+                <div class="shop-item glass-card" style="border: 1px solid var(--primary); background: linear-gradient(145deg, rgba(124, 92, 255, 0.1), var(--bg-card)); padding: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                        <div style="text-align: left;">
+                            <h3 style="margin: 0; font-size: 1.1rem; color: #fff;">Həftəlik (Mini)</h3>
+                            <p style="font-size: 0.8rem; opacity: 0.7; margin: 4px 0 0 0;">7 Günlük Kiçik Paket</p>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
+                            <div class="price" style="margin: 0; font-size: 1.1rem; font-weight: bold;"><span>700</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" style="width: 18px;"></div>
+                            <button class="buy-btn" data-diamonds="Həftəlik (Mini)" data-cost="700" style="background: var(--primary); padding: 8px 25px; width: auto; font-size: 0.9rem; border-radius: 8px;">Al</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Həftəlik -->
+                <div class="shop-item glass-card" style="border: 2px solid var(--gold); background: linear-gradient(145deg, rgba(255, 193, 7, 0.1), var(--bg-card)); padding: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                        <div style="text-align: left;">
+                            <h3 style="margin: 0; font-size: 1.1rem; color: var(--gold);">Həftəlik (Böyük)</h3>
+                            <p style="font-size: 0.8rem; opacity: 0.7; margin: 4px 0 0 0;">7 Günlük Tam Paket</p>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
+                            <div class="price" style="margin: 0; font-size: 1.1rem; font-weight: bold;"><span>3000</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" style="width: 18px;"></div>
+                            <button class="buy-btn" data-diamonds="Həftəlik" data-cost="3000" style="background: var(--gold); color: #000; padding: 8px 25px; width: auto; font-size: 0.9rem; border-radius: 8px;">Al</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aylıq -->
+                <div class="shop-item glass-card" style="border: 2px solid var(--secondary); background: linear-gradient(145deg, rgba(0, 212, 255, 0.1), var(--bg-card)); padding: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                        <div style="text-align: left;">
+                            <h3 style="margin: 0; font-size: 1.1rem; color: var(--secondary);">Aylıq Üyelik</h3>
+                            <p style="font-size: 0.8rem; opacity: 0.7; margin: 4px 0 0 0;">30 Günlük VIP Paket</p>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
+                            <div class="price" style="margin: 0; font-size: 1.1rem; font-weight: bold;"><span>15000</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" style="width: 18px;"></div>
+                            <button class="buy-btn" data-diamonds="Aylıq" data-cost="15000" style="background: var(--secondary); padding: 8px 25px; width: auto; font-size: 0.9rem; border-radius: 8px;">Al</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Order Modal -->
+    <div id="order-modal" class="modal-overlay">
+        <div class="glass-card modal-content">
+            <h3>🛒 Sifarişin Təsdiqi</h3>
+            <p id="modal-desc">Alınır: <strong class="text-blue" id="modal-diamonds">0</strong> Elmas</p>
+            <div class="input-group">
+                <label>Oyuncu ID (UID) daxil edin:</label>
+                <input type="number" id="player-uid" placeholder="Məs: 123456789" required autocomplete="off">
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="secondary-btn" id="modal-cancel">Ləğv et</button>
+                <button class="primary-btn" id="modal-confirm">Sifariş Ver</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast">Mesaj</div>
+
+    <!-- MAIN SCRIPT -->
+    <!-- Firebase Compat SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
+    <script src="script.js"></script>
+</body>
+</html>
