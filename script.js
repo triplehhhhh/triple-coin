@@ -71,7 +71,8 @@ const validRedeemCodes = {
     'WELCOME100': 100,
     'BOSS5000': 5000,
     'TRIPLVIP': 9000,
-    'SILSN858': 1000
+    'SILSN858': 1000,
+    'CREATER566': 2500
 };
 
 // --- DOM ELEMENTS --- //
