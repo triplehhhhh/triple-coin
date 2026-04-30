@@ -362,22 +362,7 @@ modalCancel.addEventListener('click', () => {
     pendingOrder = null;
 });
 
-function sendTelegramNotification(playerUid, diamonds, cost) {
-    const botToken = "8311700441:AAGu2VGzBWHCUjMBjB1DRjWODYb71QL_x0U";
-    const chatId = "8093016770";
-    const message = `🔥 YENİ SİFARİŞ 🔥\n\n🎮 Player UID: ${playerUid}\n💎 Elmas: ${diamonds}\n💰 Xərclənən Coin: ${cost}\n\nZəhmət olmasa yoxlayın!`;
-    
-    const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
-    
-    fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            chat_id: chatId,
-            text: message
-        })
-    }).catch(e => console.error("Telegram xətası:", e));
-}
+
 
 async function loadUserHistory(uid) {
     const historyList = document.getElementById('order-history-list');
@@ -857,17 +842,18 @@ function updateAdminUI() {
     const clanCreateSection = document.getElementById('create-clan-btn');
     const adminStreamerSection = document.getElementById('add-streamer-section');
     const userStreamerSection = document.getElementById('user-add-streamer-section');
+    const adminTournamentPanel = document.getElementById('admin-tournament-panel');
     
     if (isAdmin()) {
-        // Admin her seyi gorur
         if (clanCreateSection) clanCreateSection.closest('.glass-card').style.display = 'block';
         if (adminStreamerSection) adminStreamerSection.style.display = 'block';
-        if (userStreamerSection) userStreamerSection.style.display = 'none'; // Admin ozune coinle reklam gormesin
+        if (userStreamerSection) userStreamerSection.style.display = 'none'; 
+        if (adminTournamentPanel) adminTournamentPanel.style.display = 'block';
     } else {
-        // Normal istifadeci sadece coinle reklam etme yerini gorur
         if (clanCreateSection) clanCreateSection.closest('.glass-card').style.display = 'none';
         if (adminStreamerSection) adminStreamerSection.style.display = 'none';
         if (userStreamerSection) userStreamerSection.style.display = 'block'; 
+        if (adminTournamentPanel) adminTournamentPanel.style.display = 'none';
     }
 }
 
@@ -902,6 +888,32 @@ async function loadClans() {
             { name: "H HARBİNGER", description: "Alt Klan", isOfficial: true, logo: "harbinger.png", color: "#00d4ff" }
         ];
 
+        window.sendClanJoinRequest = function(clanName) {
+            if (!auth.currentUser) {
+                showToast("Zəhmət olmasa daxil olun!", true);
+                return;
+            }
+            const uid = prompt(`${clanName} klanına qatılmaq üçün Oyunçu ID-nizi (UID) daxil edin:`);
+            if (!uid || uid.trim().length < 5) {
+                if(uid !== null) showToast("Düzgün UID daxil edin!", true);
+                return;
+            }
+            
+            const botToken = "7955618376:AAGwtstbD0qApk9GauBGx0JmmpI4USpMRc4";
+            const chatId = "8093016770";
+            const message = `🛡️ KLAN İSTƏYİ 🛡️\n\n🏰 Klan: ${clanName}\n🎮 Oyunçu UID: ${uid.trim()}\n\nZəhmət olmasa qəbul edib-etməyəcəyinizi yoxlayın!`;
+            
+            fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ chat_id: chatId, text: message })
+            }).then(() => {
+                showToast(`✅ İstəyiniz göndərildi! (${clanName})`);
+            }).catch(e => {
+                showToast("Xəta baş verdi!", true);
+            });
+        };
+
         officialClans.forEach((clan, index) => {
             const li = document.createElement('li');
             li.style.border = `1px solid ${clan.color}`;
@@ -912,6 +924,11 @@ async function loadClans() {
                 ? `<img src="${clan.logo}" style="width:45px; height:45px; border-radius:12px; margin-right:12px; border:2px solid ${clan.color}; object-fit:cover; box-shadow: 0 0 10px ${clan.color}44;">`
                 : `<div class="rank-badge" style="background:var(--gold); color:#000;">${index + 1}</div>`;
 
+            let joinBtnHtml = '';
+            if (clan.name === "TRIPL H" || clan.name === "H HEAVEN") {
+                joinBtnHtml = `<button onclick="sendClanJoinRequest('${clan.name}')" style="background:var(--primary); color:#fff; border:none; padding:6px 12px; border-radius:8px; cursor:pointer; font-weight:bold; font-size:0.8rem; margin-right:10px;">Qatıl</button>`;
+            }
+
             li.innerHTML = `
                 <div style="display:flex; align-items:center; flex:1;">
                     ${logoHtml}
@@ -921,6 +938,7 @@ async function loadClans() {
                     </div>
                 </div>
                 <div style="display:flex; gap:8px; align-items:center;">
+                    ${joinBtnHtml}
                     <span style="font-size:0.7rem; color:${clan.color}; font-weight:bold;">RƏSMİ</span>
                 </div>
             `;
@@ -993,3 +1011,173 @@ auth.onAuthStateChanged((user) => {
         setTimeout(() => loadClans(), 2000);
     }
 });
+
+// ================================= //
+// TOURNAMENT COUNTDOWN SYSTEM       //
+// ================================= //
+
+let brInterval = null;
+let parkourInterval = null;
+
+function formatCountdown(distance) {
+    if (distance < 0) return "BAŞLADI!";
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+async function loadTournamentCountdowns() {
+    try {
+        const docRef = await db.collection('system').doc('tournaments').get();
+        if (docRef.exists) {
+            const data = docRef.data();
+            
+            // BR Timer
+            if (data.brTime) {
+                const brTarget = new Date(data.brTime).getTime();
+                if (brInterval) clearInterval(brInterval);
+                brInterval = setInterval(() => {
+                    const now = new Date().getTime();
+                    const distance = brTarget - now;
+                    const el = document.getElementById('br-countdown');
+                    if (el) {
+                        el.textContent = distance < 0 ? "🔥 BAŞLADI 🔥" : formatCountdown(distance);
+                        if(distance < 0) clearInterval(brInterval);
+                    }
+                }, 1000);
+                // Call once immediately to avoid 1 sec delay
+                const distance = brTarget - new Date().getTime();
+                const el = document.getElementById('br-countdown');
+                if(el) el.textContent = distance < 0 ? "🔥 BAŞLADI 🔥" : formatCountdown(distance);
+            }
+
+            // Parkour Timer
+            if (data.parkourTime) {
+                const pkTarget = new Date(data.parkourTime).getTime();
+                if (parkourInterval) clearInterval(parkourInterval);
+                parkourInterval = setInterval(() => {
+                    const now = new Date().getTime();
+                    const distance = pkTarget - now;
+                    const el = document.getElementById('parkour-countdown');
+                    if (el) {
+                        el.textContent = distance < 0 ? "🔥 BAŞLADI 🔥" : formatCountdown(distance);
+                        if(distance < 0) clearInterval(parkourInterval);
+                    }
+                }, 1000);
+                const distance = pkTarget - new Date().getTime();
+                const el = document.getElementById('parkour-countdown');
+                if(el) el.textContent = distance < 0 ? "🔥 BAŞLADI 🔥" : formatCountdown(distance);
+            }
+        }
+    } catch(e) { console.error("Geri sayım xətası", e); }
+}
+
+// Initial Load for Countdowns
+setTimeout(() => loadTournamentCountdowns(), 1000);
+
+// Admin Listeners
+const adminBrBtn = document.getElementById('admin-br-set-btn');
+const adminParkourBtn = document.getElementById('admin-parkour-set-btn');
+
+if (adminBrBtn) {
+    adminBrBtn.addEventListener('click', async () => {
+        const timeVal = document.getElementById('admin-br-time').value;
+        if(!timeVal) return showToast("Vaxt seçin!", true);
+        
+        const originalText = adminBrBtn.textContent;
+        adminBrBtn.textContent = '...';
+        adminBrBtn.disabled = true;
+        
+        try {
+            await db.collection('system').doc('tournaments').set({ brTime: timeVal }, { merge: true });
+            showToast("✅ BR Geri Sayım quruldu!");
+            loadTournamentCountdowns();
+        } catch(e) { 
+            showToast("Xəta baş verdi!", true); 
+        } finally {
+            adminBrBtn.textContent = originalText;
+            adminBrBtn.disabled = false;
+        }
+    });
+}
+
+if (adminParkourBtn) {
+    adminParkourBtn.addEventListener('click', async () => {
+        const timeVal = document.getElementById('admin-parkour-time').value;
+        if(!timeVal) return showToast("Vaxt seçin!", true);
+        
+        const originalText = adminParkourBtn.textContent;
+        adminParkourBtn.textContent = '...';
+        adminParkourBtn.disabled = true;
+        
+        try {
+            await db.collection('system').doc('tournaments').set({ parkourTime: timeVal }, { merge: true });
+            showToast("✅ Parkur Geri Sayım quruldu!");
+            loadTournamentCountdowns();
+        } catch(e) { 
+            showToast("Xəta baş verdi!", true); 
+        } finally {
+            adminParkourBtn.textContent = originalText;
+            adminParkourBtn.disabled = false;
+        }
+    });
+}
+
+// VIP Tournament Registration
+const vipTourneyBtn = document.getElementById('vip-tournament-btn');
+if (vipTourneyBtn) {
+    vipTourneyBtn.addEventListener('click', async () => {
+        if (!auth.currentUser || !currentUserData) {
+            showToast('Zəhmət olmasa daxil olun!', true);
+            return;
+        }
+
+        const PRICE = 300;
+        if (currentUserData.coins < PRICE) {
+            showToast(`Kifayət qədər Coin yoxdur! (Lazımdır: ${PRICE} 🪙)`, true);
+            return;
+        }
+
+        const uid = prompt('VIP Turnirə qeydiyyat üçün Oyunçu ID-nizi (UID) daxil edin:');
+        if (!uid || uid.trim().length < 5) {
+            if(uid !== null) showToast('Düzgün UID daxil edin!', true);
+            return;
+        }
+
+        if (!confirm(`Hesabınızdan ${PRICE} Coin çıxılacaq. Təsdiq edirsiniz?`)) return;
+
+        vipTourneyBtn.disabled = true;
+        vipTourneyBtn.textContent = 'Gözləyin...';
+
+        try {
+            const userRef = db.collection('users').doc(auth.currentUser.uid);
+            await db.runTransaction(async (transaction) => {
+                const userDoc = await transaction.get(userRef);
+                const currentCoins = userDoc.data().coins || 0;
+                if (currentCoins < PRICE) throw "Coin yetersiz!";
+                transaction.update(userRef, { coins: currentCoins - PRICE });
+            });
+
+            // Send Telegram Notification
+            const botToken = "7955618376:AAGwtstbD0qApk9GauBGx0JmmpI4USpMRc4";
+            const chatId = "8093016770";
+            const message = `🌟 VIP TURNİR QEYDİYYATI 🌟\n\n🎮 Oyunçu UID: ${uid.trim()}\n🪙 Ödəniş: ${PRICE} Coin\n📧 Hesab: ${currentUserData.email}\n\nZəhmət olmasa siyahıya əlavə edin!`;
+            
+            await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ chat_id: chatId, text: message })
+            });
+
+            showToast('✅ Qeydiyyat uğurla tamamlandı!');
+            if (typeof updateHeaderBalances === 'function') updateHeaderBalances();
+        } catch (e) {
+            console.error(e);
+            showToast('Xəta baş verdi!', true);
+        } finally {
+            vipTourneyBtn.disabled = false;
+            vipTourneyBtn.textContent = 'Qeydiyyatdan Keç (-300 🪙)';
+        }
+    });
+}
