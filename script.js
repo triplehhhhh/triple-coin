@@ -578,10 +578,10 @@ auth.onAuthStateChanged((user) => {
 // --- YAYINÇILAR (STREAMERS) SYSTEM --- //
 
 const platformIcons = {
-    youtube: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0icmVkIj48cGF0aCBkPSJNMjMuNDk4IDYuMTg2YTMuMDE2IDMuMDE2IDAgMCAwLTIuMTIyLTIuMTM2QzE5LjUwNSAzLjU0NSAxMiAzLjU0NSAxMiAzLjU0NXMtNy41MDUgMC05LjM3Ny41MDVBMy4wMTcgMy4wMTcgMCAwIDAgLjUwMiA2LjE4NkMwIDguMDcgMCAxMiAwIDEyczAgMy45My41MDIgNS44MTRhMy4wMTYgMy4wMTYgMCAwIDAgMi4xMjIgMi4xMzZjMS44NzEuNTA1IDkuMzc2LjUwNSA5LjM3Ni41MDVzNy41MDUgMCA5LjM3Ny0uNTA1YTMuMDE1IDMuMDE1IDAgMCAwIDIuMTIyLTIuMTM2QzI0IDE1LjkzIDI0IDEyIDI0IDEyczAtMy45My0uNTAyLTUuODE0ek05LjU0NSAxNS41NjhWOC40MzJMMTUuODE4IDEybC02LjI3MyAzLjU2OHoiLz48L3N2Zz4=',
-    tiktok: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NDggNTEyIiBmaWxsPSJibGFjayI+PHBhdGggZD0iTTQ0OCAyMDkuOTFhMjEwLjA2IDIxMC4wNiAwIDAgMS0xMjIuNzctMzkuMjV2MTc4LjcyQTE2Mi41NSAxNjIuNTUgMCAxIDEgMTYyLjYgMTg2Ljgxdjc3LjM0YTg1LjIgODUuMiAwIDEgMCA4NS4xIDg1LjExVjBoNzYuNjhhMTUxLjc4IDE1MS43OCAwIDAgMCAxMjMuNjIgMTIzLjYyeiIvPjwvc3ZnPg==',
-    twitch: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiBmaWxsPSIjOTE0NkZGIj48cGF0aCBkPSJNMzkxLjE3IDEwMy40N2gtMzguNjN2MTA5LjdoMzguNjN6TTI4NSAxMDMuNDdoLTM4LjYzdjEwOS43SDI4NXpNMTIwLjgzIDBMMjQuMzEgOTEuNDJ2MzMyLjg2aDExNS44M1Y1MTJsODEuMDgtODcuNzJoNzcuMjJMNDg3LjY5IDIyOC4xVjB6TTQ0OSAyMDkuNmwtODQuOTQgODcuNzJIMjU2bC04MS4wOCA4Ny43MnYtODcuNzJNOTMuODNWMzguNjNINDQ5eiIvPjwvc3ZnPg==',
-    instagram: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NDggNTEyIiBmaWxsPSIjZTEzMDZjIj48cGF0aCBkPSJNMjI0LjEgMTQxYy02My42IDAtMTE0LjkgNTEuMy0xMTQuOSAxMTQuOXM1MS4zIDExNC45IDExNC45IDExNC45UzMzOSAzMTkuNSAzMzkgMjU1LjkgMjg3LjcgMTQxIDIyNC4xIDE0MXptMCAxODkuNmMtNDEuMSAwLTc0LjctMzMuNS03NC43LTc0LjdzMzMuNS03NC43IDc0LjctNzQuNyA3NC43IDMzLjUgNzQuNyA3NC43LTMzLjYgNzQuNy03NC43IDc0Ljd6bTE0Ni40LTE5NC4zYzAgMTQuOS0xMiAyNi44LTI2LjggMjYuOC0xNC45IDAtMjYuOC0xMi0yNi44LTI2LjhzMTItMjYuOCAyNi44LTI2LjggMjYuOCAxMiAyNi44IDI2Ljh6bTc2LjEgMjcuMmMtMS43LTM1LjktOS45LTY3LjctMzYuMi05My45LTI2LjItMjYuMi01OC0zNC40LTkzLjktMzYuMi0zNy0yLjEtMTQ3LjktMi4xLTE4NC45IDAtMzUuOCAxLjctNjcuNiA5LjktOTMuOSAzNi4xcy0zNC40IDU4LTM2LjIgOTMuOWMtMi4xIDM3LTIuMSAxNDcuOSAwIDE4NC45IDEuNyAzNS45IDkuOSA2Ny43IDM2LjIgOTMuOXM1OCAzNC40IDkzLjkgMzYuMmMzNyAyLjEgMTQ3LjkgMi4xIDE4NC45IDAgMzUuOS0xLjcgNjcuNy05LjkgOTMuOS0zNi4yIDI2LjItMjYuMiAzNC40LTU4IDM2LjItOTMuOSAyLjEtMzcgMi4xLTE0Ny44IDAtMTg0Ljh6TTM5OC44IDM4OGMtNy44IDE5LjYtMjIuOSAzNC43LTQyLjYgNDIuNi0yOS41IDExLjctOTkuNSA5LTEzMi4xIDlzLTEwMi43IDIuNi0xMzIuMS05Yy0xOS42LTcuOC0zNC43LTIyLjktNDIuNi00Mi42LTExLjctMjkuNS05LTk5LjUtOS0xMzIuMXMtMi42LTEwMi43IDktMTMyLjFjNy44LTE5LjYgMjIuOS0zNC43IDQyLjYtNDIuNiAyOS41LTExLjcgOTkuNS05IDEzMi4xLTlzMTAyLjctMi42IDEzMi4xIDljMTkuNiA3LjggMzQuNyAyMi45IDQyLjYgNDIuNiAxMS43IDI5LjUgOSA5OS41IDkgMTMyLjFzMi43IDEwMi43LTkgMTMyLjF6Ii8+PC9zdmc+'
+    youtube: 'https://www.google.com/s2/favicons?domain=youtube.com&sz=256',
+    tiktok: 'https://www.google.com/s2/favicons?domain=tiktok.com&sz=256',
+    twitch: 'https://www.google.com/s2/favicons?domain=twitch.tv&sz=256',
+    instagram: 'https://www.google.com/s2/favicons?domain=instagram.com&sz=256'
 };
 
 const platformNames = {
@@ -640,8 +640,8 @@ async function loadStreamers() {
             li.innerHTML = `
                 <div style="display:flex; align-items:center;">
                     <div style="position:relative;">
-                        <img src="${profileImg}" style="width:40px; height:40px; margin-right:15px; border-radius:50%; object-fit:cover; background-color:white; padding:2px; border: ${data.isVip ? '2px solid var(--gold)' : '1px solid rgba(255,255,255,0.1)'};" alt="${platName}">
-                        ${data.isVip ? '<div style="position:absolute; top:-5px; left:-5px; font-size:12px;">🌟</div>' : ''}
+                        <img src="${profileImg}" style="width:55px; height:55px; margin-right:15px; border-radius:50%; object-fit:cover; background-color:white; padding:2px; border: ${data.isVip ? '2px solid var(--gold)' : '2px solid rgba(255,255,255,0.2)'}; box-shadow: 0 4px 10px rgba(0,0,0,0.5);" alt="${platName}">
+                        ${data.isVip ? '<div style="position:absolute; top:-5px; left:-5px; font-size:16px; filter: drop-shadow(0 0 5px gold);">🌟</div>' : ''}
                     </div>
                     <div style="text-align:left;">
                         <strong>${data.name} ${vipBadge}</strong>
