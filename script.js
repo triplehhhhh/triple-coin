@@ -1046,11 +1046,12 @@ async function loadTournamentCountdowns() {
                         if(distance < 0) clearInterval(brInterval);
                     }
                 }, 1000);
-                // Call once immediately to avoid 1 sec delay
                 const distance = brTarget - new Date().getTime();
                 const el = document.getElementById('br-countdown');
                 if(el) el.textContent = distance < 0 ? "🔥 BAŞLADI 🔥" : formatCountdown(distance);
             }
+            if (data.brRoomId) document.getElementById('br-room-id').textContent = data.brRoomId;
+            if (data.brRoomPass) document.getElementById('br-room-pass').textContent = data.brRoomPass;
 
             // Parkour Timer
             if (data.parkourTime) {
@@ -1069,6 +1070,8 @@ async function loadTournamentCountdowns() {
                 const el = document.getElementById('parkour-countdown');
                 if(el) el.textContent = distance < 0 ? "🔥 BAŞLADI 🔥" : formatCountdown(distance);
             }
+            if (data.parkourRoomId) document.getElementById('parkour-room-id').textContent = data.parkourRoomId;
+            if (data.parkourRoomPass) document.getElementById('parkour-room-pass').textContent = data.parkourRoomPass;
         }
     } catch(e) { console.error("Geri sayım xətası", e); }
 }
@@ -1083,15 +1086,23 @@ const adminParkourBtn = document.getElementById('admin-parkour-set-btn');
 if (adminBrBtn) {
     adminBrBtn.addEventListener('click', async () => {
         const timeVal = document.getElementById('admin-br-time').value;
-        if(!timeVal) return showToast("Vaxt seçin!", true);
+        const roomId = document.getElementById('admin-br-room-id').value;
+        const roomPass = document.getElementById('admin-br-room-pass').value;
+        
+        if(!timeVal && !roomId && !roomPass) return showToast("Məlumat daxil edin!", true);
         
         const originalText = adminBrBtn.textContent;
         adminBrBtn.textContent = '...';
         adminBrBtn.disabled = true;
         
         try {
-            await db.collection('system').doc('tournaments').set({ brTime: timeVal }, { merge: true });
-            showToast("✅ BR Geri Sayım quruldu!");
+            const updates = {};
+            if (timeVal) updates.brTime = timeVal;
+            if (roomId) updates.brRoomId = roomId;
+            if (roomPass) updates.brRoomPass = roomPass;
+
+            await db.collection('system').doc('tournaments').set(updates, { merge: true });
+            showToast("✅ BR Məlumatları yadda saxlanıldı!");
             loadTournamentCountdowns();
         } catch(e) { 
             showToast("Xəta baş verdi!", true); 
@@ -1105,15 +1116,23 @@ if (adminBrBtn) {
 if (adminParkourBtn) {
     adminParkourBtn.addEventListener('click', async () => {
         const timeVal = document.getElementById('admin-parkour-time').value;
-        if(!timeVal) return showToast("Vaxt seçin!", true);
+        const roomId = document.getElementById('admin-parkour-room-id').value;
+        const roomPass = document.getElementById('admin-parkour-room-pass').value;
+
+        if(!timeVal && !roomId && !roomPass) return showToast("Məlumat daxil edin!", true);
         
         const originalText = adminParkourBtn.textContent;
         adminParkourBtn.textContent = '...';
         adminParkourBtn.disabled = true;
         
         try {
-            await db.collection('system').doc('tournaments').set({ parkourTime: timeVal }, { merge: true });
-            showToast("✅ Parkur Geri Sayım quruldu!");
+            const updates = {};
+            if (timeVal) updates.parkourTime = timeVal;
+            if (roomId) updates.parkourRoomId = roomId;
+            if (roomPass) updates.parkourRoomPass = roomPass;
+
+            await db.collection('system').doc('tournaments').set(updates, { merge: true });
+            showToast("✅ Parkur Məlumatları yadda saxlanıldı!");
             loadTournamentCountdowns();
         } catch(e) { 
             showToast("Xəta baş verdi!", true); 

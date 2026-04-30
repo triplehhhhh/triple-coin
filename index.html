@@ -174,25 +174,27 @@
                 <!-- Admin: Turnuva İdarəsi -->
                 <div class="action-card glass-card" id="admin-tournament-panel" style="display: none; border: 1px solid var(--gold); margin-bottom:20px;">
                     <h3>👑 Admin: Turnuva İdarəsi</h3>
-                    <p>BR Odası üçün geri sayım vaxtını təyin et:</p>
-                    <div class="input-row" style="margin-bottom: 10px;">
-                        <input type="datetime-local" id="admin-br-time" style="background:rgba(255,255,255,0.05); color:#fff; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); width:100%;">
-                        <button class="primary-btn" id="admin-br-set-btn" style="width:100px;">Qur</button>
+                    <p style="color:var(--primary); font-weight:bold;">🔫 BR Odası Ayarları:</p>
+                    <div style="display:flex; flex-direction:column; gap:5px; margin-bottom:15px;">
+                        <input type="datetime-local" id="admin-br-time" style="background:rgba(255,255,255,0.05); color:#fff; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1);">
+                        <input type="text" id="admin-br-room-id" placeholder="Oda ID" style="background:rgba(255,255,255,0.05); color:#fff; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1);">
+                        <input type="text" id="admin-br-room-pass" placeholder="Oda Şifrəsi" style="background:rgba(255,255,255,0.05); color:#fff; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1);">
+                        <button class="primary-btn" id="admin-br-set-btn">BR Məlumatlarını Yadda Saxla</button>
                     </div>
-                    <p>Parkur Odası üçün geri sayım vaxtını təyin et:</p>
-                    <div class="input-row">
-                        <input type="datetime-local" id="admin-parkour-time" style="background:rgba(255,255,255,0.05); color:#fff; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); width:100%;">
+
+                    <p style="color:#fff; font-weight:bold;">🏃 Parkur Odası Ayarları:</p>
+                    <div style="display:flex; flex-direction:column; gap:5px;">
+                        <input type="datetime-local" id="admin-parkour-time" style="background:rgba(255,255,255,0.05); color:#fff; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1);">
+                        <input type="text" id="admin-parkour-room-id" placeholder="Oda ID" style="background:rgba(255,255,255,0.05); color:#fff; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1);">
+                        <input type="text" id="admin-parkour-room-pass" placeholder="Oda Şifrəsi" style="background:rgba(255,255,255,0.05); color:#fff; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1);">
+                        <button class="primary-btn" id="admin-parkour-set-btn" style="background:#c0c0c0; color:#000;">Parkur Məlumatlarını Yadda Saxla</button>
                     </div>
                 </div>
 
                 <div class="tournament-card" style="background: linear-gradient(135deg, rgba(255,215,0,0.2) 0%, rgba(255,215,0,0.05) 100%); border: 1px solid var(--gold);">
                     <h2>🌟 VIP Ödüllü Oda</h2>
                     <p>Yalnız seçilmişlər üçün xüsusi turnir! Qeydiyyat <strong style="color:var(--gold);">300 Coin</strong>.</p>
-                    <div style="background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px; margin: 10px 0;">
-                        Oda ID: <strong class="text-gold">Gizlidir</strong><br>
-                        Şifrə: <strong class="text-gold">Gizlidir</strong>
-                    </div>
-                    <button class="primary-btn" id="vip-tournament-btn" style="background:var(--gold); color:#000; font-weight:bold;">Qeydiyyatdan Keç (-300 🪙)</button>
+                    <button class="primary-btn" id="vip-tournament-btn" style="background:var(--gold); color:#000; font-weight:bold; margin-top:10px;">Qeydiyyatdan Keç (-300 🪙)</button>
                 </div>
 
                 <div class="tournament-card">
@@ -203,7 +205,6 @@
                         Oda ID: <strong class="text-gold" id="br-room-id">Gizlidir</strong><br>
                         Şifrə: <strong class="text-gold" id="br-room-pass">Gizlidir</strong>
                     </div>
-                    <button class="primary-btn" style="background:#00d084;" onclick="showToast('Turnir hələ başlamayıb!', true)">Qeydiyyatdan Keç</button>
                 </div>
 
                 <div class="tournament-card parkour">
@@ -214,7 +215,6 @@
                         Oda ID: <strong class="text-gold" id="parkour-room-id">Gizlidir</strong><br>
                         Şifrə: <strong class="text-gold" id="parkour-room-pass">Gizlidir</strong>
                     </div>
-                    <button class="primary-btn" style="background:#00d084;" onclick="showToast('Turnir hələ başlamayıb!', true)">Qeydiyyatdan Keç</button>
                 </div>
             </div>
 
