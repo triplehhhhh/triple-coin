@@ -249,10 +249,22 @@ async function fetchUserData(uid) {
 
 function updateUIWithUserData() {
     if (!currentUserData) return;
-    document.getElementById('user-id-display').textContent = `ID: #${currentUserData.id}`;
+    
+    const userName = currentUserData.displayName || currentUserData.email?.split('@')[0] || 'İstifadəçi';
+    document.getElementById('user-id-display').textContent = `${userName} (ID: #${currentUserData.id})`;
+    
     document.getElementById('coin-balance').textContent = currentUserData.coins;
     document.getElementById('diamond-balance').textContent = currentUserData.diamonds;
     document.getElementById('shop-coin-balance').textContent = currentUserData.coins;
+
+    // Profile fields
+    const profileNameInput = document.getElementById('profile-name-input');
+    const profileEmailDisplay = document.getElementById('profile-email-display');
+    const profileAvatar = document.getElementById('profile-avatar');
+
+    if (profileNameInput) profileNameInput.value = currentUserData.displayName || '';
+    if (profileEmailDisplay) profileEmailDisplay.value = currentUserData.email || '';
+    if (profileAvatar && currentUserData.photoURL) profileAvatar.src = currentUserData.photoURL;
 }
 
 // Helper to update specific fields in Firestore
@@ -508,9 +520,11 @@ function switchMainTab(tabId, navElement) {
     document.querySelectorAll('.bottom-nav .nav-item').forEach(ni => ni.classList.remove('active'));
     if (navElement) navElement.classList.add('active');
 
-    // Load leaderboard when coin tab is opened
+    // Tab specific loads
     if (tabId === 'tab-coin') {
         loadLeaderboard();
+    } else if (tabId === 'tab-profile') {
+        updateUIWithUserData();
     }
 }
 
@@ -550,7 +564,7 @@ async function loadLeaderboard() {
                 <div style="display:flex; align-items:center; gap:12px;">
                     <div class="rank-badge ${medalClass}">${medalEmoji}</div>
                     <div>
-                        <strong>${data.email ? data.email.split('@')[0] : 'Anonim'}</strong>
+                        <strong>${data.displayName || (data.email ? data.email.split('@')[0] : 'Anonim')}</strong>
                         <br><small style="opacity:0.6;">ID: #${data.id || '????'}</small>
                     </div>
                 </div>
@@ -1197,6 +1211,38 @@ if (vipTourneyBtn) {
         } finally {
             vipTourneyBtn.disabled = false;
             vipTourneyBtn.textContent = 'Qeydiyyatdan Keç (-300 🪙)';
+        }
+    });
+}
+
+// --- PROFILE SYSTEM --- //
+const saveProfileBtn = document.getElementById('save-profile-btn');
+if (saveProfileBtn) {
+    saveProfileBtn.addEventListener('click', async () => {
+        const newName = document.getElementById('profile-name-input').value.trim();
+        
+        if (!newName) {
+            showToast("Zəhmət olmasa adınızı daxil edin!", true);
+            return;
+        }
+
+        if (newName.length < 3) {
+            showToast("Ad çox qısadır (ən azı 3 hərf)!", true);
+            return;
+        }
+
+        saveProfileBtn.disabled = true;
+        saveProfileBtn.textContent = 'Yadda saxlanılır...';
+
+        try {
+            await updateUserData({ displayName: newName });
+            showToast("✅ Profil məlumatları yeniləndi!");
+        } catch (e) {
+            console.error(e);
+            showToast("Xəta baş verdi!", true);
+        } finally {
+            saveProfileBtn.disabled = false;
+            saveProfileBtn.textContent = 'Məlumatları Yadda Saxla';
         }
     });
 }
