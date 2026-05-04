@@ -67,13 +67,15 @@ document.getElementById('google-login-btn').addEventListener('click', async () =
 
 // Demo redeem codes 
 const validRedeemCodes = {
-    'TRIPL2024': 500,
-    'WELCOME100': 100,
-    'BOSS5000': 5000,
-    'TRIPLVIP': 9000,
-    'SILSN858': 1000,
-    'CREATER566': 2500
+    'CLS323': 555,
+    'SLDO367': 555,
+    'LSOM829': 555,
+    'BSUD379': 555,
+    'UDS555': 555
 };
+
+// Global-Only Codes (can only be used once in total by anyone)
+const globalSingleUseCodes = ['CLS323', 'SLDO367', 'LSOM829', 'BSUD379', 'UDS555'];
 
 // --- DOM ELEMENTS --- //
 const loginForm = document.getElementById('login-form');
@@ -312,12 +314,33 @@ document.getElementById('redeem-btn').addEventListener('click', async () => {
         return;
     }
 
+    messageEl.textContent = "Yoxlanılır...";
+    
+    // Check if it's a global single-use code
+    if (globalSingleUseCodes.includes(code)) {
+        try {
+            const globalRef = db.collection('global_redeems').doc(code);
+            const globalDoc = await globalRef.get();
+            
+            if (globalDoc.exists) {
+                messageEl.textContent = "❌ Bu kod artıq başqası tərəfindən istifadə edilib!";
+                messageEl.classList.add('error-text');
+                return;
+            }
+
+            // Mark as used globally and update user in one go (simplified for this UI)
+            await globalRef.set({ usedBy: auth.currentUser.uid, usedAt: firebase.firestore.FieldValue.serverTimestamp() });
+        } catch (e) {
+            console.error("Global redeem check error:", e);
+            showToast("Xəta baş verdi!", true);
+            return;
+        }
+    }
+
     const reward = validRedeemCodes[code];
     const newCoins = currentUserData.coins + reward;
     const newRedeemedCodes = [...(currentUserData.redeemedCodes || []), code];
 
-    messageEl.textContent = "Gözləyin...";
-    
     await updateUserData({
         coins: newCoins,
         redeemedCodes: newRedeemedCodes
@@ -330,7 +353,7 @@ document.getElementById('redeem-btn').addEventListener('click', async () => {
     
     setTimeout(() => {
         messageEl.textContent = '';
-    }, 3000);
+    }, 5000);
 });
 
 // --- CONVERTER SYSTEM --- //
@@ -897,7 +920,7 @@ async function loadClans() {
 
         // --- RƏSMİ KLANLAR (HƏMİŞƏ YUXARIDA) ---
         const officialClans = [
-            { name: "TRIPL H", description: "Ana Klan - Rəsmi", isOfficial: true, logo: "tripleh.png", color: "var(--gold)" },
+            { name: "TRIPL H", description: "Ana Klan - Rəsmi", isOfficial: true, logo: "klan_logo.png", color: "var(--gold)" },
             { name: "H HEAVEN", description: "Alt Klan", isOfficial: true, logo: "heaven.png", color: "#a020f0" },
             { name: "H HELL", description: "Alt Klan", isOfficial: true, logo: "hell.png", color: "#ff4d4d" },
             { name: "H HARBİNGER", description: "Alt Klan", isOfficial: true, logo: "harbinger.png", color: "#00d4ff" }
