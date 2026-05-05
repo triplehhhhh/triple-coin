@@ -330,6 +330,45 @@
                 </div>
             </div>
 
+            <!-- TAB 7: SPONSORLAR -->
+            <div id="tab-sponsors" class="section-view">
+                <div class="action-card glass-card">
+                    <h3>🤝 Sponsorlar və Xidmətlər</h3>
+                    <p>Güvənli tərəfdaşlarımız və təklif olunan xidmətlər.</p>
+                    <ul class="streamer-list" id="sponsor-list" style="margin-top: 20px;">
+                        <li style="text-align:center; opacity:0.5;">Yüklənir...</li>
+                    </ul>
+                </div>
+
+                <!-- Admin: Sponsor Əlavə Et -->
+                <div class="action-card glass-card" id="admin-add-sponsor-section" style="margin-top:16px; display: none; border: 1px solid var(--success);">
+                    <h3>👑 Admin: Sponsor Əlavə Et</h3>
+                    <div class="input-group">
+                        <label for="sponsor-name">Sponsor Adı / Kanal</label>
+                        <input type="text" id="sponsor-name" placeholder="Məs: Diamond Store" autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                        <label for="sponsor-service">Xidmət Növü</label>
+                        <select id="sponsor-service" style="width:100%; padding:14px 16px; border:1px solid rgba(255,255,255,0.08); border-radius:12px; background:rgba(255,255,255,0.04); color:#e8e8f0; font-family:'Outfit',sans-serif; outline:none;">
+                            <option value="Elmas vuran">💎 Elmas vuran</option>
+                            <option value="Editör">🎬 Editör</option>
+                            <option value="Arxa oyuncusu">🎮 Arxa oyuncusu</option>
+                            <option value="Hesab bağlantı təmizləyicisi (Admin)">🛡️ Hesab təmizləyicisi (Admin)</option>
+                            <option value="Hesab satıcı">💰 Hesab satıcı</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="sponsor-link">Link</label>
+                        <input type="url" id="sponsor-link" placeholder="https://..." autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                        <label for="sponsor-photo">Profil Şəkli Linki</label>
+                        <input type="url" id="sponsor-photo" placeholder="https://... şəkil linki" autocomplete="off">
+                    </div>
+                    <button class="primary-btn" id="admin-add-sponsor-btn" style="background: var(--success); color: #000;">Sponsoru Əlavə Et</button>
+                </div>
+            </div>
+
             <!-- Bottom Navigation Bar -->
             <nav class="bottom-nav">
                 <div class="nav-item active" onclick="switchMainTab('tab-coin', this)">
@@ -349,6 +388,9 @@
                 </div>
                 <div class="nav-item" onclick="switchMainTab('tab-profile', this)">
                     <span>👤</span><small>Profil</small>
+                </div>
+                <div class="nav-item" onclick="switchMainTab('tab-sponsors', this)">
+                    <span>🤝</span><small>Sponsor</small>
                 </div>
             </nav>
         </div>

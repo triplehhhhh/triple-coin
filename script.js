@@ -655,7 +655,7 @@ async function loadStreamers() {
             const aVip = a.isVip ? 1 : 0;
             const bVip = b.isVip ? 1 : 0;
             if (aVip !== bVip) return bVip - aVip;
-            return (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0);
+            return (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0);
         });
 
         streamersArray.forEach(data => {
@@ -749,27 +749,112 @@ if (addStreamerBtn) {
                 link: link,
                 photoURL: photoURL,
                 isVip: isVip,
-                addedBy: auth.currentUser ? auth.currentUser.uid : 'unknown',
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
-
+            showToast('✅ Yayınçı əlavə edildi!');
             nameInput.value = '';
             linkInput.value = '';
             if(photoInput) photoInput.value = '';
-            if(vipCheck) vipCheck.checked = false;
-            msgEl.textContent = '✅ Yayınçı uğurla əlavə edildi!';
-            msgEl.classList.add('success');
-            showToast('Yayınçı əlavə olundu!');
-
-            // Reload the list
-            await loadStreamers();
-        } catch (e) {
-            console.error('Add streamer error:', e);
-            msgEl.textContent = '❌ Xəta baş verdi: ' + e.message;
-            msgEl.classList.add('error-text');
+            loadStreamers();
+        } catch(e) { 
+            showToast('Xəta baş verdi!', true); 
         } finally {
             addStreamerBtn.disabled = false;
             addStreamerBtn.textContent = 'Yayınçını Əlavə Et';
+        }
+    });
+}
+
+// --- SPONSORLAR SYSTEM --- //
+async function loadSponsors() {
+    const listEl = document.getElementById('sponsor-list');
+    if (!listEl) return;
+
+    listEl.innerHTML = '<li style="text-align:center; opacity:0.5;">Yüklənir...</li>';
+
+    try {
+        const snapshot = await db.collection('sponsors').orderBy('createdAt', 'desc').get();
+        listEl.innerHTML = '';
+
+        if (snapshot.empty) {
+            listEl.innerHTML = '<li style="text-align:center; opacity:0.5;">Hələ sponsor əlavə edilməyib</li>';
+            return;
+        }
+
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const sid = doc.id;
+            const li = document.createElement('li');
+            
+            const profileImg = data.photoURL || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+
+            li.innerHTML = `
+                <div style="display:flex; align-items:center;">
+                    <img src="${profileImg}" style="width:55px; height:55px; margin-right:15px; border-radius:50%; object-fit:cover; background-color:white; padding:2px; border: 2px solid var(--success); box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                    <div style="text-align:left;">
+                        <strong>${data.name}</strong>
+                        <br><small style="color:var(--success);">${data.service}</small>
+                    </div>
+                </div>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <button class="secondary-btn" style="width:auto; padding:5px 15px; border-color:var(--success); color:var(--success);" onclick="window.open('${data.link}', '_blank')">Əlaqə</button>
+                    ${isAdmin() ? `<button onclick="deleteSponsor('${sid}')" style="background:rgba(255,0,0,0.2); border:none; color:#ff4d4d; cursor:pointer; padding:5px 10px; border-radius:5px;">Sil</button>` : ''}
+                </div>
+            `;
+            listEl.appendChild(li);
+        });
+    } catch (e) {
+        console.error('Sponsors error:', e);
+        listEl.innerHTML = '<li style="text-align:center; color:#ff6b6b;">Xəta baş verdi</li>';
+    }
+}
+
+async function deleteSponsor(sid) {
+    if(!confirm('Bu sponsoru silmək istəyirsiniz?')) return;
+    try {
+        await db.collection('sponsors').doc(sid).delete();
+        showToast('Sponsor silindi');
+        loadSponsors();
+    } catch(e) { showToast('Xəta!', true); }
+}
+
+const adminAddSponsorBtn = document.getElementById('admin-add-sponsor-btn');
+if (adminAddSponsorBtn) {
+    adminAddSponsorBtn.addEventListener('click', async () => {
+        const nameInput = document.getElementById('sponsor-name');
+        const serviceSelect = document.getElementById('sponsor-service');
+        const linkInput = document.getElementById('sponsor-link');
+        const photoInput = document.getElementById('sponsor-photo');
+
+        const name = nameInput.value.trim();
+        const service = serviceSelect.value;
+        const link = linkInput.value.trim();
+        const photoURL = photoInput.value.trim();
+
+        if (!isAdmin()) return;
+        if (!name || !link) return showToast('Ad və link mütləqdir!', true);
+
+        adminAddSponsorBtn.disabled = true;
+        adminAddSponsorBtn.textContent = '...';
+
+        try {
+            await db.collection('sponsors').add({
+                name: name,
+                service: service,
+                link: link,
+                photoURL: photoURL,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            showToast('✅ Sponsor əlavə edildi!');
+            nameInput.value = '';
+            linkInput.value = '';
+            photoInput.value = '';
+            loadSponsors();
+        } catch(e) {
+            showToast('Xəta!', true);
+        } finally {
+            adminAddSponsorBtn.disabled = false;
+            adminAddSponsorBtn.textContent = 'Sponsoru Əlavə Et';
         }
     });
 }
@@ -863,6 +948,9 @@ switchMainTab = function(tabId, navElement) {
     if (tabId === 'tab-clans') {
         loadClans();
     }
+    if (tabId === 'tab-sponsors') {
+        loadSponsors();
+    }
 };
 
 // ================================= //
@@ -887,11 +975,15 @@ function updateAdminUI() {
         if (adminStreamerSection) adminStreamerSection.style.display = 'block';
         if (userStreamerSection) userStreamerSection.style.display = 'none'; 
         if (adminTournamentPanel) adminTournamentPanel.style.display = 'block';
+        const adminSponsorSection = document.getElementById('admin-add-sponsor-section');
+        if (adminSponsorSection) adminSponsorSection.style.display = 'block';
     } else {
         if (clanCreateSection) clanCreateSection.closest('.glass-card').style.display = 'none';
         if (adminStreamerSection) adminStreamerSection.style.display = 'none';
         if (userStreamerSection) userStreamerSection.style.display = 'block'; 
         if (adminTournamentPanel) adminTournamentPanel.style.display = 'none';
+        const adminSponsorSection = document.getElementById('admin-add-sponsor-section');
+        if (adminSponsorSection) adminSponsorSection.style.display = 'none';
     }
 }
 
