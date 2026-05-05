@@ -475,20 +475,24 @@ async function loadUserHistory(uid) {
 }
 
 function sendTelegramNotification(playerUid, diamonds, cost) {
-    const botToken = "7955618376:AAGwtstbD0qApk9GauBGx0JmmpI4USpMRc4";
+    const botToken1 = "7955618376:AAGwtstbD0qApk9GauBGx0JmmpI4USpMRc4";
+    const botToken2 = "8780015110:AAGauhtjYaeCRbrGOb821u4mtDablK4euQ0";
     const chatId = "8093016770";
-    const message = `🔥 YENİ SİFARİŞ 🔥\n\n🎮 Player UID: ${playerUid}\n💎 Elmas: ${diamonds}\n💰 Xərclənən Coin: ${cost}\n\nZəhmət olmasa yoxlayın!`;
+    const message = `🔥 YENİ ELMAS SİFARİŞİ 🔥\n\n🎮 Player UID: ${playerUid}\n💎 Elmas: ${diamonds}\n💰 Xərclənən Coin: ${cost}\n\nZəhmət olmasa yoxlayın!`;
     
-    const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
-    
-    fetch(url, {
+    // Send to Bot 1
+    fetch(`https://api.telegram.org/bot${botToken1}/sendMessage`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            chat_id: chatId,
-            text: message
-        })
-    }).catch(e => console.error("Telegram xətası:", e));
+        body: JSON.stringify({ chat_id: chatId, text: message })
+    }).catch(e => console.error("Telegram Bot 1 xətası:", e));
+
+    // Send to Bot 2 (Yeni Bot - Yalnız Elmas)
+    fetch(`https://api.telegram.org/bot${botToken2}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: chatId, text: message })
+    }).catch(e => console.error("Telegram Bot 2 xətası:", e));
 }
 
 modalConfirm.addEventListener('click', async () => {
