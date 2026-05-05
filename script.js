@@ -71,11 +71,31 @@ const validRedeemCodes = {
     'SLDO367': 555,
     'LSOM829': 555,
     'BSUD379': 555,
-    'UDS555': 555
+    'UDS555': 555,
+    'SLPZ902': 555,
+    'ÜLXI289': 555,
+    'XÜED293': 555,
+    'QTSO298': 555,
+    'SLÖU827': 555,
+    'MSPD258': 555,
+    'SMXL889': 555,
+    'MSNK907': 555,
+    'XMSL626': 555,
+    'BSKX259': 555,
+    'PDIXN826': 555,
+    'SNDI827': 555,
+    'SMSO426': 555,
+    'MSIX298': 555,
+    'BSHX297': 555
 };
 
 // Global-Only Codes (can only be used once in total by anyone)
-const globalSingleUseCodes = ['CLS323', 'SLDO367', 'LSOM829', 'BSUD379', 'UDS555'];
+const globalSingleUseCodes = [
+    'CLS323', 'SLDO367', 'LSOM829', 'BSUD379', 'UDS555',
+    'SLPZ902', 'ÜLXI289', 'XÜED293', 'QTSO298', 'SLÖU827',
+    'MSPD258', 'SMXL889', 'MSNK907', 'XMSL626', 'BSKX259',
+    'PDIXN826', 'SNDI827', 'SMSO426', 'MSIX298', 'BSHX297'
+];
 
 // --- DOM ELEMENTS --- //
 const loginForm = document.getElementById('login-form');
