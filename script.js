@@ -1013,6 +1013,11 @@ function updateAdminUI() {
         if (adminSponsorSection) adminSponsorSection.style.display = 'block';
         const adminRedeemGenerator = document.getElementById('admin-redeem-generator');
         if (adminRedeemGenerator) adminRedeemGenerator.style.display = 'block';
+        const adminRedeemHistory = document.getElementById('admin-redeem-history');
+        if (adminRedeemHistory) {
+            adminRedeemHistory.style.display = 'block';
+            loadAdminRedeems();
+        }
     } else {
         if (clanCreateSection) clanCreateSection.closest('.glass-card').style.display = 'none';
         if (adminStreamerSection) adminStreamerSection.style.display = 'none';
@@ -1022,6 +1027,8 @@ function updateAdminUI() {
         if (adminSponsorSection) adminSponsorSection.style.display = 'none';
         const adminRedeemGenerator = document.getElementById('admin-redeem-generator');
         if (adminRedeemGenerator) adminRedeemGenerator.style.display = 'none';
+        const adminRedeemHistory = document.getElementById('admin-redeem-history');
+        if (adminRedeemHistory) adminRedeemHistory.style.display = 'none';
     }
 }
 
@@ -1407,11 +1414,9 @@ if (adminGenerateBtn) {
     adminGenerateBtn.addEventListener('click', async () => {
         const codeInput = document.getElementById('admin-new-code');
         const amountInput = document.getElementById('admin-code-amount');
-        const typeSelect = document.getElementById('admin-code-type');
 
         const code = codeInput.value.trim().toUpperCase();
         const amount = parseInt(amountInput.value);
-        const type = typeSelect.value;
 
         if (!isAdmin()) return;
         if (!code || isNaN(amount) || amount <= 0) {
@@ -1425,13 +1430,14 @@ if (adminGenerateBtn) {
         try {
             await db.collection('redeem_codes').doc(code).set({
                 amount: amount,
-                type: type, // 'global' or 'per_user'
+                type: 'global', // Her zaman global (tek istifadelik)
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
             
-            showToast(`✅ Kod Yaradıldı: ${code} (${amount} 🪙)`);
+            showToast(`✅ Kod Yaradıldı: ${code}`);
             codeInput.value = '';
             amountInput.value = '';
+            loadAdminRedeems();
         } catch (e) {
             console.error(e);
             showToast("Xəta baş verdi!", true);
@@ -1440,4 +1446,56 @@ if (adminGenerateBtn) {
             adminGenerateBtn.textContent = 'Kodu Yarat';
         }
     });
+}
+
+async function loadAdminRedeems() {
+    const listEl = document.getElementById('admin-redeem-list');
+    if (!listEl || !isAdmin()) return;
+
+    listEl.innerHTML = '<li style="text-align:center; opacity:0.5;">Yüklənir...</li>';
+
+    try {
+        const snapshot = await db.collection('redeem_codes').orderBy('createdAt', 'desc').get();
+        const globalUsed = await db.collection('global_redeems').get();
+        const usedCodes = globalUsed.docs.map(doc => doc.id);
+
+        listEl.innerHTML = '';
+        if (snapshot.empty) {
+            listEl.innerHTML = '<li style="text-align:center; opacity:0.5;">Hələ kod yaradılmayıb</li>';
+            return;
+        }
+
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const code = doc.id;
+            const isUsed = usedCodes.includes(code);
+            const li = document.createElement('li');
+            li.style.padding = '10px';
+            li.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+            
+            li.innerHTML = `
+                <div style="flex:1;">
+                    <strong style="color:var(--gold);">${code}</strong> 
+                    <span style="font-size:0.8rem; opacity:0.7; margin-left:5px;">(${data.amount} 🪙)</span>
+                    <br><small style="color:${isUsed ? 'var(--error)' : 'var(--success)'}; font-weight:bold;">
+                        ${isUsed ? '❌ İşlənib' : '✅ Aktiv'}
+                    </small>
+                </div>
+                <button onclick="deleteRedeemCode('${code}')" style="background:rgba(255,0,0,0.2); border:none; color:#ff4d4d; cursor:pointer; padding:5px 10px; border-radius:5px; font-size:0.8rem;">Sil</button>
+            `;
+            listEl.appendChild(li);
+        });
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+window.deleteRedeemCode = async function(code) {
+    if (!confirm(`${code} kodunu silmək istəyirsiniz?`)) return;
+    try {
+        await db.collection('redeem_codes').doc(code).delete();
+        await db.collection('global_redeems').doc(code).delete(); // Also delete usage record if exists
+        showToast("Kod silindi");
+        loadAdminRedeems();
+    } catch(e) { showToast("Xəta!", true); }
 }
