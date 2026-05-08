@@ -328,6 +328,27 @@
                         <button class="primary-btn" id="save-profile-btn" style="margin-top: 10px;">Məlumatları Yadda Saxla</button>
                     </div>
                 </div>
+
+                <!-- Admin: Redeem Generator -->
+                <div class="action-card glass-card" id="admin-redeem-generator" style="margin-top:16px; display: none; border: 1px solid var(--gold);">
+                    <h3>👑 Admin: Redeem Kod Yaradıcı</h3>
+                    <div class="input-group">
+                        <label for="admin-new-code">Kod Adı</label>
+                        <input type="text" id="admin-new-code" placeholder="Məs: YENI2024" autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                        <label for="admin-code-amount">Coin Miqdarı</label>
+                        <input type="number" id="admin-code-amount" placeholder="Məs: 500" autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                        <label for="admin-code-type">İstifadə Növü</label>
+                        <select id="admin-code-type" style="width:100%; padding:14px 16px; border:1px solid rgba(255,255,255,0.08); border-radius:12px; background:rgba(255,255,255,0.04); color:#e8e8f0; outline:none;">
+                            <option value="per_user">Hər kəs 1 dəfə istifadə edə bilsin</option>
+                            <option value="global">Cəmi 1 nəfər (İlk gələn qazanır)</option>
+                        </select>
+                    </div>
+                    <button class="primary-btn" id="admin-generate-code-btn" style="background: var(--gold); color: #000;">Kodu Yarat</button>
+                </div>
             </div>
 
             <!-- TAB 7: SPONSORLAR -->

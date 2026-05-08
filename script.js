@@ -305,11 +305,11 @@ async function updateUserData(fieldsToUpdate) {
     }
 }
 
-// --- REDEEM SYSTEM --- //
+// --- REDEEM SYSTEM (DYNAMIC) --- //
 
 document.getElementById('redeem-btn').addEventListener('click', async () => {
     if (!currentUserData) {
-        showToast("Xəta: İstifadəçi məlumatları (Baza) tapılmadı!", true);
+        showToast("Xəta: İstifadəçi məlumatları tapılmadı!", true);
         return;
     }
 
@@ -317,63 +317,70 @@ document.getElementById('redeem-btn').addEventListener('click', async () => {
     const messageEl = document.getElementById('redeem-message');
     const code = codeInput.value.trim().toUpperCase();
     
+    if (!code) return;
+    
     // Reset message
     messageEl.className = '';
-    messageEl.textContent = '';
-    if (!code) return;
-
-    if (!validRedeemCodes[code]) {
-        messageEl.textContent = "❌ Kod etibarsızdır!";
-        messageEl.classList.add('error-text');
-        return;
-    }
-
-    if (currentUserData.redeemedCodes && currentUserData.redeemedCodes.includes(code)) {
-        messageEl.textContent = "⚠️ Siz bu kodu artıq istifadə etmisiniz.";
-        messageEl.classList.add('error-text');
-        return;
-    }
-
     messageEl.textContent = "Yoxlanılır...";
     
-    // Check if it's a global single-use code
-    if (globalSingleUseCodes.includes(code)) {
-        try {
+    try {
+        // 1. Check Firestore for the code
+        const codeRef = db.collection('redeem_codes').doc(code);
+        const codeSnap = await codeRef.get();
+
+        if (!codeSnap.exists) {
+            // Fallback for hardcoded codes (optional, but good for backward compatibility)
+            if (typeof validRedeemCodes !== 'undefined' && validRedeemCodes[code]) {
+                // ... logic for legacy codes if needed, but we'll focus on dynamic ones
+            }
+            messageEl.textContent = "❌ Kod etibarsızdır!";
+            messageEl.classList.add('error-text');
+            return;
+        }
+
+        const codeData = codeSnap.data();
+        
+        // 2. Check if user already used it
+        if (currentUserData.redeemedCodes && currentUserData.redeemedCodes.includes(code)) {
+            messageEl.textContent = "⚠️ Siz bu kodu artıq istifadə etmisiniz.";
+            messageEl.classList.add('error-text');
+            return;
+        }
+
+        // 3. Check Global Single Use
+        if (codeData.type === 'global') {
             const globalRef = db.collection('global_redeems').doc(code);
             const globalDoc = await globalRef.get();
-            
             if (globalDoc.exists) {
                 messageEl.textContent = "❌ Bu kod artıq başqası tərəfindən istifadə edilib!";
                 messageEl.classList.add('error-text');
                 return;
             }
-
-            // Mark as used globally and update user in one go (simplified for this UI)
+            // Mark as used globally
             await globalRef.set({ usedBy: auth.currentUser.uid, usedAt: firebase.firestore.FieldValue.serverTimestamp() });
-        } catch (e) {
-            console.error("Global redeem check error:", e);
-            showToast("Xəta baş verdi!", true);
-            return;
         }
+
+        // 4. Success - Apply Reward
+        const reward = codeData.amount || 0;
+        const newCoins = (currentUserData.coins || 0) + reward;
+        const newRedeemedCodes = [...(currentUserData.redeemedCodes || []), code];
+
+        await updateUserData({
+            coins: newCoins,
+            redeemedCodes: newRedeemedCodes
+        });
+        
+        codeInput.value = '';
+        messageEl.textContent = `✅ Təbriklər! ${reward} Coin qazandınız!`;
+        messageEl.classList.add('success');
+        showToast(`Kod uğurla istifadə edildi: +${reward} 🪙`);
+        
+        setTimeout(() => { messageEl.textContent = ''; }, 5000);
+
+    } catch (e) {
+        console.error("Redeem error:", e);
+        showToast("Xəta baş verdi!", true);
     }
-
-    const reward = validRedeemCodes[code];
-    const newCoins = currentUserData.coins + reward;
-    const newRedeemedCodes = [...(currentUserData.redeemedCodes || []), code];
-
-    await updateUserData({
-        coins: newCoins,
-        redeemedCodes: newRedeemedCodes
-    });
-    
-    codeInput.value = '';
-    messageEl.textContent = `✅ Təbriklər! ${reward} Coin qazandınız!`;
-    messageEl.classList.add('success');
-    showToast("Kod uğurla istifadə edildi");
-    
-    setTimeout(() => {
-        messageEl.textContent = '';
-    }, 5000);
 });
 
 // --- CONVERTER SYSTEM --- //
@@ -1004,6 +1011,8 @@ function updateAdminUI() {
         if (adminTournamentPanel) adminTournamentPanel.style.display = 'block';
         const adminSponsorSection = document.getElementById('admin-add-sponsor-section');
         if (adminSponsorSection) adminSponsorSection.style.display = 'block';
+        const adminRedeemGenerator = document.getElementById('admin-redeem-generator');
+        if (adminRedeemGenerator) adminRedeemGenerator.style.display = 'block';
     } else {
         if (clanCreateSection) clanCreateSection.closest('.glass-card').style.display = 'none';
         if (adminStreamerSection) adminStreamerSection.style.display = 'none';
@@ -1011,6 +1020,8 @@ function updateAdminUI() {
         if (adminTournamentPanel) adminTournamentPanel.style.display = 'none';
         const adminSponsorSection = document.getElementById('admin-add-sponsor-section');
         if (adminSponsorSection) adminSponsorSection.style.display = 'none';
+        const adminRedeemGenerator = document.getElementById('admin-redeem-generator');
+        if (adminRedeemGenerator) adminRedeemGenerator.style.display = 'none';
     }
 }
 
@@ -1386,6 +1397,47 @@ if (saveProfileBtn) {
         } finally {
             saveProfileBtn.disabled = false;
             saveProfileBtn.textContent = 'Məlumatları Yadda Saxla';
+        }
+    });
+}
+
+// --- ADMIN: REDEEM GENERATOR --- //
+const adminGenerateBtn = document.getElementById('admin-generate-code-btn');
+if (adminGenerateBtn) {
+    adminGenerateBtn.addEventListener('click', async () => {
+        const codeInput = document.getElementById('admin-new-code');
+        const amountInput = document.getElementById('admin-code-amount');
+        const typeSelect = document.getElementById('admin-code-type');
+
+        const code = codeInput.value.trim().toUpperCase();
+        const amount = parseInt(amountInput.value);
+        const type = typeSelect.value;
+
+        if (!isAdmin()) return;
+        if (!code || isNaN(amount) || amount <= 0) {
+            showToast("Bütün xanaları düzgün doldurun!", true);
+            return;
+        }
+
+        adminGenerateBtn.disabled = true;
+        adminGenerateBtn.textContent = 'Yaradılır...';
+
+        try {
+            await db.collection('redeem_codes').doc(code).set({
+                amount: amount,
+                type: type, // 'global' or 'per_user'
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            showToast(`✅ Kod Yaradıldı: ${code} (${amount} 🪙)`);
+            codeInput.value = '';
+            amountInput.value = '';
+        } catch (e) {
+            console.error(e);
+            showToast("Xəta baş verdi!", true);
+        } finally {
+            adminGenerateBtn.disabled = false;
+            adminGenerateBtn.textContent = 'Kodu Yarat';
         }
     });
 }
