@@ -124,28 +124,10 @@
                         <div id="redeem-message"></div>
                     </div>
 
-                    <!-- Go to Freeshop -->
-                    <div class="action-card glass-card">
-                        <h3>Diamond <span class="badge">Yeni</span></h3>
-                        <p>Yığdığınız Coin-lər ilə Elmas ala bilərsiniz.</p>
-                        <button id="go-freeshop-btn" class="secondary-btn">Diamond'a Keçid</button>
-                    </div>
 
-                    <!-- Order History Section -->
-                    <div class="action-card glass-card" style="margin-top: 20px;">
-                        <h3>📜 Sifariş Tarixçəsi</h3>
-                        <div id="order-history-list" style="margin-top: 15px; max-height: 250px; overflow-y: auto; text-align: left;">
-                            <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">Yüklənir...</p>
-                        </div>
-                    </div>
                 </div>
                 
-                <!-- Duelo Section -->
-                <div class="duelo-section action-card glass-card">
-                    <h3>⚔️ Düello (VS)</h3>
-                    <p>Digər oyunçularla rəqabətə girərək coinlərinizi artırın!</p>
-                    <button class="primary-btn" style="background: rgba(255,50,50,0.8); margin-top:10px;" onclick="showToast('Bu funksiya tezliklə aktiv olacaq!', true)">Rəqib Axtar</button>
-                </div>
+                <!-- Duelo Section moved to Main Menu -->
 
                 <!-- Leaderboard Section -->
                 <div class="action-card glass-card" style="margin-top: 20px;">
@@ -157,15 +139,63 @@
                 </div>
             </div>
 
-            <!-- TAB 2: KLANLAR -->
-            <div id="tab-clans" class="section-view">
-                <!-- Klan Siyahısı -->
-                <div class="action-card glass-card" style="margin-top:16px;">
-                    <h3>🛡️ Mövcud Klanlar</h3>
-                    <p>Bir klana qatıl və ya öz klanına bax.</p>
-                    <ul class="clan-list" id="clan-list">
-                        <li style="text-align:center; opacity:0.5;">Yüklənir...</li>
-                    </ul>
+            <!-- TAB 2: ANA MENYU (Central FAB Content) -->
+            <div id="tab-main-menu" class="section-view">
+                <!-- Duelo Section (Moved here) -->
+                <div class="duelo-section action-card glass-card">
+                    <h3>⚔️ Düello (VS)</h3>
+                    <p>Digər oyunçularla rəqabətə girərək coinlərinizi artırın!</p>
+                    <button class="primary-btn" style="background: rgba(255,50,50,0.8); margin-top:10px;" onclick="showToast('Bu funksiya tezliklə aktiv olacaq!', true)">Rəqib Axtar</button>
+                </div>
+
+                <!-- Triangular Clan Layout -->
+                <div class="action-card glass-card" style="margin-top:20px; text-align: center;">
+                    <div class="clan-y-container">
+                        <!-- SVG Connecting Lines -->
+                        <svg class="clan-connections-svg" viewBox="0 0 350 380">
+                            <!-- Top to Center (Harbinger to Triple H) -->
+                            <line x1="175" y1="20" x2="175" y2="190" stroke="#00d2ff" stroke-width="5" stroke-linecap="round" />
+                            <!-- Center to Bottom Left (Triple H to Heaven) -->
+                            <line x1="175" y1="190" x2="50" y2="330" stroke="#e040fb" stroke-width="5" stroke-linecap="round" />
+                            <!-- Center to Bottom Right (Triple H to Hell) -->
+                            <line x1="175" y1="190" x2="300" y2="330" stroke="#ff5252" stroke-width="5" stroke-linecap="round" />
+                            
+                            <defs>
+                                <linearGradient id="grad-top" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#00d2ff;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#ff9800;stop-opacity:1" />
+                                </linearGradient>
+                                <linearGradient id="grad-left" x1="100%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#ff9800;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#e040fb;stop-opacity:1" />
+                                </linearGradient>
+                                <linearGradient id="grad-right" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#ff9800;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#ff5252;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+
+                        <!-- Harbinger (Top) -->
+                        <div class="clan-node-v2 node-v2-harbinger" onclick="openClanDetails('H HARBİNGER')">
+                            <img src="harbinger.png" alt="Harbinger">
+                        </div>
+
+                        <!-- Triple H (Center) -->
+                        <div class="clan-node-v2 node-v2-triple" onclick="openClanDetails('TRIPL H')">
+                            <img src="klan_logo.png" alt="Triple H">
+                        </div>
+
+                        <!-- Heaven (Bottom Left) -->
+                        <div class="clan-node-v2 node-v2-heaven" onclick="openClanDetails('H HEAVEN')">
+                            <img src="heaven.png" alt="Heaven">
+                        </div>
+
+                        <!-- Hell (Bottom Right) -->
+                        <div class="clan-node-v2 node-v2-hell" onclick="openClanDetails('H HELL')">
+                            <img src="hell.png" alt="Hell">
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -290,18 +320,82 @@
                 </div>
             </div>
 
-            <!-- TAB 5: QAYDALAR -->
-            <div id="tab-rules" class="section-view">
-                <div class="action-card glass-card">
-                    <h3>📜 Platforma Qaydaları</h3>
-                    <div style="text-align: left; font-size: 0.9rem; line-height: 1.6; margin-top:20px;">
-                        <ol style="padding-left: 20px;">
-                            <li style="margin-bottom: 10px;"><strong>Qeydiyyat:</strong> Hər kəs yalnız 1 hesab aça bilər. Saxta hesablar (bot) banlanır.</li>
-                            <li style="margin-bottom: 10px;"><strong>Coin Qazanmaq:</strong> Coinləri oyun oynayaraq, turnirlərdə iştirak edərək və xüsusi redeem kodlarla qazanmaq mümkündür.</li>
-                            <li style="margin-bottom: 10px;"><strong>Düello:</strong> Düello (VS) atarkən bahis edilən coinlər qalibə verilir, sistemdə cüzi kəsinti ola bilər.</li>
-                            <li style="margin-bottom: 10px;"><strong>Turnirlər:</strong> Turnir şifrələrini başqaları ilə paylaşmaq qəti qadağandır. Cəzası platformadan uzaqlaşdırmadır.</li>
-                            <li style="margin-bottom: 10px;"><strong>Ödəniş:</strong> Sifariş edilmiş elmaslar UID hesabınıza qısa vaxt ərzində yüklənir. Düzgün UID daxil edilməməsi sizin məsuliyyətinizdir.</li>
-                        </ol>
+            <!-- TAB 5: ELMAS (Shop integrated) -->
+            <div id="tab-elmas" class="section-view">
+                <!-- DIAMOND PACKS -->
+                <div class="shop-grid" style="grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 5px;">
+                    <div class="shop-item glass-card" style="padding: 15px;">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="110 💎" style="width: 50px; height: 50px; margin-bottom: 10px;">
+                        <h3 style="font-size: 0.9rem;">110 Elmas</h3>
+                        <div class="price" style="font-size: 0.9rem;"><span>1100</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin" style="width:14px;"></div>
+                        <button class="buy-btn" data-diamonds="110" data-cost="1100" style="padding: 8px; font-size: 0.8rem;">Satın Al</button>
+                    </div>
+                    <div class="shop-item glass-card" style="padding: 15px;">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="220 💎" style="width: 50px; height: 50px; margin-bottom: 10px;">
+                        <h3 style="font-size: 0.9rem;">220 Elmas</h3>
+                        <div class="price" style="font-size: 0.9rem;"><span>2200</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin" style="width:14px;"></div>
+                        <button class="buy-btn" data-diamonds="220" data-cost="2200" style="padding: 8px; font-size: 0.8rem;">Satın Al</button>
+                    </div>
+                    <div class="shop-item glass-card" style="padding: 15px;">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="341 💎" style="width: 50px; height: 50px; margin-bottom: 10px;">
+                        <h3 style="font-size: 0.9rem;">341 Elmas</h3>
+                        <div class="price" style="font-size: 0.9rem;"><span>3410</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin" style="width:14px;"></div>
+                        <button class="buy-btn" data-diamonds="341" data-cost="3410" style="padding: 8px; font-size: 0.8rem;">Satın Al</button>
+                    </div>
+                    <div class="shop-item glass-card" style="padding: 15px;">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="572 💎" style="width: 50px; height: 50px; margin-bottom: 10px;">
+                        <h3 style="font-size: 0.9rem;">572 Elmas</h3>
+                        <div class="price" style="font-size: 0.9rem;"><span>5720</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin" style="width:14px;"></div>
+                        <button class="buy-btn" data-diamonds="572" data-cost="5720" style="padding: 8px; font-size: 0.8rem;">Satın Al</button>
+                    </div>
+                    <div class="shop-item glass-card" style="padding: 15px;">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="1166 💎" style="width: 50px; height: 50px; margin-bottom: 10px;">
+                        <h3 style="font-size: 0.9rem;">1166 Elmas</h3>
+                        <div class="price" style="font-size: 0.9rem;"><span>11660</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin" style="width:14px;"></div>
+                        <button class="buy-btn" data-diamonds="1166" data-cost="11660" style="padding: 8px; font-size: 0.8rem;">Satın Al</button>
+                    </div>
+                    <div class="shop-item glass-card" style="padding: 15px;">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="2398 💎" style="width: 50px; height: 50px; margin-bottom: 10px;">
+                        <h3 style="font-size: 0.9rem;">2398 Elmas</h3>
+                        <div class="price" style="font-size: 0.9rem;"><span>23980</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin" style="width:14px;"></div>
+                        <button class="buy-btn" data-diamonds="2398" data-cost="23980" style="padding: 8px; font-size: 0.8rem;">Satın Al</button>
+                    </div>
+                </div>
+
+                <!-- MEMBERSHIP PACKS -->
+                <h3 style="margin-top: 25px; margin-bottom: 15px; text-align: center; color: var(--primary); font-size: 1.2rem;">🌟 Üyelik Paketləri</h3>
+                <div class="shop-grid" style="grid-template-columns: 1fr; gap: 10px;">
+                    <div class="shop-item glass-card" style="border: 1px solid var(--primary); background: rgba(124, 92, 255, 0.05); padding: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="text-align: left;">
+                                <h4 style="margin: 0; font-size: 1rem; color: #fff;">Həftəlik (Mini)</h4>
+                                <p style="font-size: 0.75rem; opacity: 0.7; margin: 2px 0 0 0;">7 Günlük Kiçik Paket</p>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
+                                <div class="price" style="margin: 0; font-size: 1rem;"><span>700</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" style="width: 14px;"></div>
+                                <button class="buy-btn" data-diamonds="Həftəlik (Mini)" data-cost="700" style="padding: 5px 15px; font-size: 0.8rem; width: auto;">Al</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="shop-item glass-card" style="border: 1px solid var(--gold); background: rgba(255, 193, 7, 0.05); padding: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="text-align: left;">
+                                <h4 style="margin: 0; font-size: 1rem; color: var(--gold);">Həftəlik (Böyük)</h4>
+                                <p style="font-size: 0.75rem; opacity: 0.7; margin: 2px 0 0 0;">7 Günlük Tam Paket</p>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
+                                <div class="price" style="margin: 0; font-size: 1rem;"><span>3000</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" style="width: 14px;"></div>
+                                <button class="buy-btn" data-diamonds="Həftəlik" data-cost="3000" style="padding: 5px 15px; font-size: 0.8rem; width: auto; background: var(--gold); color:#000;">Al</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Order History -->
+                <div class="action-card glass-card" style="margin-top:20px;">
+                    <h3>📜 Sifariş Tarixçəsi</h3>
+                    <div id="order-history-list" style="margin-top:10px; max-height: 200px; overflow-y: auto;">
+                        <p style="text-align:center; opacity:0.5;">Yüklənir...</p>
                     </div>
                 </div>
             </div>
@@ -394,19 +488,22 @@
             <!-- Bottom Navigation Bar -->
             <nav class="bottom-nav">
                 <div class="nav-item active" onclick="switchMainTab('tab-coin', this)">
-                    <span>🪙</span><small>Coin</small>
-                </div>
-                <div class="nav-item" onclick="switchMainTab('tab-clans', this)">
-                    <span>🛡️</span><small>Klanlar</small>
+                    <span>🏠</span><small>Ana Səhifə</small>
                 </div>
                 <div class="nav-item" onclick="switchMainTab('tab-tournaments', this)">
                     <span>🏆</span><small>Turnuva</small>
                 </div>
                 <div class="nav-item" onclick="switchMainTab('tab-streamers', this)">
-                    <span>🎥</span><small>Yayınçılar</small>
+                    <span>🎥</span><small>Yayın</small>
                 </div>
-                <div class="nav-item" onclick="switchMainTab('tab-rules', this)">
-                    <span>📜</span><small>Qaydalar</small>
+                
+                <!-- Bulging Central Button -->
+                <div class="nav-item nav-fab" onclick="switchMainTab('tab-main-menu', this)">
+                    <span>H</span>
+                </div>
+
+                <div class="nav-item" onclick="switchMainTab('tab-elmas', this)">
+                    <span>🛍️</span><small>Shop</small>
                 </div>
                 <div class="nav-item" onclick="switchMainTab('tab-profile', this)">
                     <span>👤</span><small>Profil</small>
@@ -417,139 +514,7 @@
             </nav>
         </div>
 
-        <!-- FreeShop View -->
-        <div id="freeshop-view" class="view">
-            <header class="app-header glass-card">
-                <button id="go-dashboard-btn" class="icon-btn">← Geri</button>
-                <h2>Diamond</h2>
-                <div class="user-info">
-                    Mənim Coin-lərim: <span id="shop-coin-balance" class="text-gold bold">0</span>
-                </div>
-            </header>
-
-            <div class="shop-grid">
-                <div class="shop-item glass-card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="110 💎">
-                    <h3>110 Elmas</h3>
-                    <div class="price"><span>1100</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin"></div>
-                    <button class="buy-btn" data-diamonds="110" data-cost="1100">Satın Al</button>
-                </div>
-                <div class="shop-item glass-card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="220 💎">
-                    <h3>220 Elmas</h3>
-                    <div class="price"><span>2200</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin"></div>
-                    <button class="buy-btn" data-diamonds="220" data-cost="2200">Satın Al</button>
-                </div>
-                <div class="shop-item glass-card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="341 💎">
-                    <h3>341 Elmas</h3>
-                    <div class="price"><span>3410</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin"></div>
-                    <button class="buy-btn" data-diamonds="341" data-cost="3410">Satın Al</button>
-                </div>
-                <div class="shop-item glass-card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="572 💎">
-                    <h3>572 Elmas</h3>
-                    <div class="price"><span>5720</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin"></div>
-                    <button class="buy-btn" data-diamonds="572" data-cost="5720">Satın Al</button>
-                </div>
-                <div class="shop-item glass-card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="792 💎">
-                    <h3>792 Elmas</h3>
-                    <div class="price"><span>7920</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin"></div>
-                    <button class="buy-btn" data-diamonds="792" data-cost="7920">Satın Al</button>
-                </div>
-                <div class="shop-item glass-card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="1166 💎">
-                    <h3>1166 Elmas</h3>
-                    <div class="price"><span>11660</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin"></div>
-                    <button class="buy-btn" data-diamonds="1166" data-cost="11660">Satın Al</button>
-                </div>
-                <div class="shop-item glass-card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="1276 💎">
-                    <h3>1276 Elmas</h3>
-                    <div class="price"><span>12760</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin"></div>
-                    <button class="buy-btn" data-diamonds="1276" data-cost="12760">Satın Al</button>
-                </div>
-                <div class="shop-item glass-card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="1738 💎">
-                    <h3>1738 Elmas</h3>
-                    <div class="price"><span>17380</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin"></div>
-                    <button class="buy-btn" data-diamonds="1738" data-cost="17380">Satın Al</button>
-                </div>
-                <div class="shop-item glass-card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="2398 💎">
-                    <h3>2398 Elmas</h3>
-                    <div class="price"><span>23980</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin"></div>
-                    <button class="buy-btn" data-diamonds="2398" data-cost="23980">Satın Al</button>
-                </div>
-                <div class="shop-item glass-card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="4796 💎">
-                    <h3>4796 Elmas</h3>
-                    <div class="price"><span>47960</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin"></div>
-                    <button class="buy-btn" data-diamonds="4796" data-cost="47960">Satın Al</button>
-                </div>
-                <div class="shop-item glass-card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="6160 💎">
-                    <h3>6160 Elmas</h3>
-                    <div class="price"><span>61600</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin"></div>
-                    <button class="buy-btn" data-diamonds="6160" data-cost="61600">Satın Al</button>
-                </div>
-                <div class="shop-item glass-card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="7194 💎">
-                    <h3>7194 Elmas</h3>
-                    <div class="price"><span>71940</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin"></div>
-                    <button class="buy-btn" data-diamonds="7194" data-cost="71940">Satın Al</button>
-                </div>
-            </div>
-
-            <!-- MEMBERSHIP PACKS -->
-            <h3 style="margin-top: 30px; margin-bottom: 15px; text-align: center; color: var(--primary); font-size: 1.4rem;">🌟 Xüsusi Üyelik Paketləri</h3>
-            <div class="shop-grid" style="grid-template-columns: 1fr;">
-                
-                <!-- Həftəlik Mini -->
-                <div class="shop-item glass-card" style="border: 1px solid var(--primary); background: linear-gradient(145deg, rgba(124, 92, 255, 0.1), var(--bg-card)); padding: 20px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                        <div style="text-align: left;">
-                            <h3 style="margin: 0; font-size: 1.1rem; color: #fff;">Həftəlik (Mini)</h3>
-                            <p style="font-size: 0.8rem; opacity: 0.7; margin: 4px 0 0 0;">7 Günlük Kiçik Paket</p>
-                        </div>
-                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
-                            <div class="price" style="margin: 0; font-size: 1.1rem; font-weight: bold;"><span>700</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" style="width: 18px;"></div>
-                            <button class="buy-btn" data-diamonds="Həftəlik (Mini)" data-cost="700" style="background: var(--primary); padding: 8px 25px; width: auto; font-size: 0.9rem; border-radius: 8px;">Al</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Həftəlik -->
-                <div class="shop-item glass-card" style="border: 2px solid var(--gold); background: linear-gradient(145deg, rgba(255, 193, 7, 0.1), var(--bg-card)); padding: 20px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                        <div style="text-align: left;">
-                            <h3 style="margin: 0; font-size: 1.1rem; color: var(--gold);">Həftəlik (Böyük)</h3>
-                            <p style="font-size: 0.8rem; opacity: 0.7; margin: 4px 0 0 0;">7 Günlük Tam Paket</p>
-                        </div>
-                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
-                            <div class="price" style="margin: 0; font-size: 1.1rem; font-weight: bold;"><span>3000</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" style="width: 18px;"></div>
-                            <button class="buy-btn" data-diamonds="Həftəlik" data-cost="3000" style="background: var(--gold); color: #000; padding: 8px 25px; width: auto; font-size: 0.9rem; border-radius: 8px;">Al</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Aylıq -->
-                <div class="shop-item glass-card" style="border: 2px solid var(--secondary); background: linear-gradient(145deg, rgba(0, 212, 255, 0.1), var(--bg-card)); padding: 20px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                        <div style="text-align: left;">
-                            <h3 style="margin: 0; font-size: 1.1rem; color: var(--secondary);">Aylıq Üyelik</h3>
-                            <p style="font-size: 0.8rem; opacity: 0.7; margin: 4px 0 0 0;">30 Günlük VIP Paket</p>
-                        </div>
-                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
-                            <div class="price" style="margin: 0; font-size: 1.1rem; font-weight: bold;"><span>15000</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" style="width: 18px;"></div>
-                            <button class="buy-btn" data-diamonds="Aylıq" data-cost="15000" style="background: var(--secondary); padding: 8px 25px; width: auto; font-size: 0.9rem; border-radius: 8px;">Al</button>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
+        <!-- FreeShop View removed -->
 
     </div>
 

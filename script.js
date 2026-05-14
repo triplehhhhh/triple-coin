@@ -564,8 +564,25 @@ modalConfirm.addEventListener('click', async () => {
 // --- EVENT BINDINGS FOR TABS & NAVIGATION --- //
 document.getElementById('link-login').addEventListener('click', () => switchTab('login'));
 document.getElementById('link-register').addEventListener('click', () => switchTab('register'));
-document.getElementById('go-freeshop-btn').addEventListener('click', () => switchView('freeshop-view'));
-document.getElementById('go-dashboard-btn').addEventListener('click', () => switchView('dashboard-view'));
+// document.getElementById('go-freeshop-btn').addEventListener('click', () => switchView('freeshop-view'));
+// document.getElementById('go-dashboard-btn').addEventListener('click', () => switchView('dashboard-view'));
+
+// --- VIEW & TAB SWITCHING --- //
+function switchTab(type) {
+    if (type === 'login') {
+        loginForm.style.display = 'block';
+        registerForm.style.display = 'none';
+    } else {
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'block';
+    }
+}
+
+function switchView(viewId) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    const target = document.getElementById(viewId);
+    if (target) target.classList.add('active');
+}
 
 // --- MAIN TAB SWITCHING (Bottom Nav) --- //
 function switchMainTab(tabId, navElement) {
@@ -583,7 +600,19 @@ function switchMainTab(tabId, navElement) {
         loadLeaderboard();
     } else if (tabId === 'tab-profile') {
         updateUIWithUserData();
+    } else if (tabId === 'tab-elmas') {
+        if (auth.currentUser) loadUserHistory(auth.currentUser.uid);
+    } else if (tabId === 'tab-main-menu') {
+        loadClans(); // Load general clans
     }
+}
+
+// Function to open specific official clan info
+async function openClanDetails(clanName) {
+    showToast(`${clanName} klanı yüklənir...`);
+    // Here you can implement a modal or a separate view for clan members/stats
+    // For now, let's filter the clan list or just show a message
+    console.log("Loading details for:", clanName);
 }
 
 // --- LEADERBOARD --- //
