@@ -586,12 +586,6 @@ function switchView(viewId) {
 
 // --- MAIN TAB SWITCHING (Bottom Nav) --- //
 function switchMainTab(tabId, navElement) {
-    // LOCK MAIN MENU
-    if (tabId === 'tab-main-menu') {
-        showToast("🔒 Bu bölmə müvəqqəti olaraq bağlanılıb!", true);
-        return;
-    }
-
     // Hide all section views
     document.querySelectorAll('.section-view').forEach(sv => sv.classList.remove('active'));
     // Show the target tab
