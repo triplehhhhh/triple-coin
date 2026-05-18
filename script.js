@@ -273,17 +273,23 @@ async function fetchUserData(uid) {
 function updateUIWithUserData() {
     if (!currentUserData) return;
     
-    const userName = currentUserData.displayName || currentUserData.email?.split('@')[0] || 'İstifadəçi';
+    // Completely safe email split fallback to avoid split of undefined crashes
+    const emailPrefix = currentUserData.email ? currentUserData.email.split('@')[0] : '';
+    const userName = currentUserData.displayName || emailPrefix || 'İstifadəçi';
+    
     const userIdDisplay = document.getElementById('user-id-display');
-    if (userIdDisplay) userIdDisplay.textContent = `${userName} (ID: #${currentUserData.id})`;
+    if (userIdDisplay) {
+        const idStr = currentUserData.id !== undefined ? ` (ID: #${currentUserData.id})` : '';
+        userIdDisplay.textContent = `${userName}${idStr}`;
+    }
     
     const coinBalanceEl = document.getElementById('coin-balance');
     const diamondBalanceEl = document.getElementById('diamond-balance');
     const shopCoinBalanceEl = document.getElementById('shop-coin-balance');
 
-    if (coinBalanceEl) coinBalanceEl.textContent = currentUserData.coins;
-    if (diamondBalanceEl) diamondBalanceEl.textContent = currentUserData.diamonds;
-    if (shopCoinBalanceEl) shopCoinBalanceEl.textContent = currentUserData.coins;
+    if (coinBalanceEl) coinBalanceEl.textContent = currentUserData.coins !== undefined ? currentUserData.coins : 0;
+    if (diamondBalanceEl) diamondBalanceEl.textContent = currentUserData.diamonds !== undefined ? currentUserData.diamonds : 0;
+    if (shopCoinBalanceEl) shopCoinBalanceEl.textContent = currentUserData.coins !== undefined ? currentUserData.coins : 0;
 
     // Profile fields
     const profileNameInput = document.getElementById('profile-name-input');
@@ -292,7 +298,9 @@ function updateUIWithUserData() {
 
     if (profileNameInput) profileNameInput.value = currentUserData.displayName || '';
     if (profileEmailDisplay) profileEmailDisplay.value = currentUserData.email || '';
-    if (profileAvatar && currentUserData.photoURL) profileAvatar.src = currentUserData.photoURL;
+    if (profileAvatar) {
+        profileAvatar.src = currentUserData.photoURL || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+    }
 }
 
 // Helper to update specific fields in Firestore
@@ -593,8 +601,13 @@ function switchView(viewId) {
 function switchMainTab(tabId, navElement) {
     // Hide all section views
     document.querySelectorAll('.section-view').forEach(sv => sv.classList.remove('active'));
-    // Show the target tab
-    document.getElementById(tabId).classList.add('active');
+    // Show the target tab safely
+    const targetTab = document.getElementById(tabId);
+    if (targetTab) {
+        targetTab.classList.add('active');
+    } else {
+        console.warn(`Tab view with ID "${tabId}" not found.`);
+    }
     
     // Update nav active state
     document.querySelectorAll('.bottom-nav .nav-item').forEach(ni => ni.classList.remove('active'));
@@ -610,12 +623,10 @@ function switchMainTab(tabId, navElement) {
     }
 
     // Tab specific loads
-    if (tabId === 'tab-profile') {
+    if (tabId === 'tab-profile' || tabId === 'tab-main-menu') {
         updateUIWithUserData();
     } else if (tabId === 'tab-elmas') {
         if (auth.currentUser) loadUserHistory(auth.currentUser.uid);
-    } else if (tabId === 'tab-main-menu') {
-        loadClans(); // Load general clans
     } else if (tabId === 'tab-tournaments') {
         loadLeaderboard(); // Load ranking list on the tournaments section
     }

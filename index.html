@@ -90,61 +90,25 @@
 
             <!-- TAB 2: ANA MENYU (Central FAB Content) -->
             <div id="tab-main-menu" class="section-view">
-                <!-- Duelo Section (Moved here) -->
+                <!-- Stats Grid (Coin and Diamond Balance - Moved to Central H Menu) -->
+                <div class="stats-grid" style="margin-bottom: 20px;">
+                    <div class="stat-card glass-card">
+                        <h3>Coin Balansı</h3>
+                        <div class="stat-value text-gold" id="coin-balance">0</div>
+                        <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin" class="stat-icon">
+                    </div>
+                    <div class="stat-card glass-card shadow-blue">
+                        <h3>Elmas</h3>
+                        <div class="stat-value text-blue" id="diamond-balance">0</div>
+                        <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="diamond" class="stat-icon">
+                    </div>
+                </div>
+
+                <!-- Duelo Section -->
                 <div class="duelo-section action-card glass-card">
                     <h3>⚔️ Düello (VS)</h3>
                     <p>Digər oyunçularla rəqabətə girərək coinlərinizi artırın!</p>
                     <button class="primary-btn" style="background: rgba(255,50,50,0.8); margin-top:10px;" onclick="showToast('Bu funksiya tezliklə aktiv olacaq!', true)">Rəqib Axtar</button>
-                </div>
-
-                <!-- Triangular Clan Layout -->
-                <div class="action-card glass-card" style="margin-top:20px; text-align: center;">
-                    <div class="clan-y-container">
-                        <!-- SVG Connecting Lines -->
-                        <svg class="clan-connections-svg" viewBox="0 0 350 380">
-                            <!-- Center to Top Left (Triple H to Hell) -->
-                            <line x1="175" y1="190" x2="50" y2="50" stroke="#ff5252" stroke-width="5" stroke-linecap="round" />
-                            <!-- Center to Top Right (Triple H to Heaven) -->
-                            <line x1="175" y1="190" x2="300" y2="50" stroke="#e040fb" stroke-width="5" stroke-linecap="round" />
-                            <!-- Center to Bottom (Triple H to Harbinger) -->
-                            <line x1="175" y1="190" x2="175" y2="330" stroke="#00d2ff" stroke-width="5" stroke-linecap="round" />
-                            
-                            <defs>
-                                <linearGradient id="grad-top" x1="0%" y1="0%" x2="0%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#00d2ff;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#ff9800;stop-opacity:1" />
-                                </linearGradient>
-                                <linearGradient id="grad-left" x1="100%" y1="0%" x2="0%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#ff9800;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#e040fb;stop-opacity:1" />
-                                </linearGradient>
-                                <linearGradient id="grad-right" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#ff9800;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#ff5252;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                        </svg>
-
-                        <!-- Harbinger (Bottom - Aşağısında) -->
-                        <div class="clan-node-v2 node-v2-harbinger" onclick="openClanDetails('H HARBİNGER')">
-                            <img src="harbinger.png" alt="Harbinger">
-                        </div>
-
-                        <!-- Triple H (Center) -->
-                        <div class="clan-node-v2 node-v2-triple" onclick="openClanDetails('TRIPL H')">
-                            <img src="klan_logo.png" alt="Triple H">
-                        </div>
-
-                        <!-- Heaven (Top Right - Sağında) -->
-                        <div class="clan-node-v2 node-v2-heaven" onclick="openClanDetails('H HEAVEN')">
-                            <img src="heaven.png" alt="Heaven">
-                        </div>
-
-                        <!-- Hell (Top Left - Solunda) -->
-                        <div class="clan-node-v2 node-v2-hell" onclick="openClanDetails('H HELL')">
-                            <img src="hell.png" alt="Hell">
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -370,19 +334,6 @@
 
             <!-- TAB 6: PROFIL -->
             <div id="tab-profile" class="section-view">
-                <!-- Stats Grid (Coin and Diamond Balance - Moved to Profile) -->
-                <div class="stats-grid" style="margin-bottom: 20px;">
-                    <div class="stat-card glass-card">
-                        <h3>Coin Balansı</h3>
-                        <div class="stat-value text-gold" id="coin-balance">0</div>
-                        <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin" class="stat-icon">
-                    </div>
-                    <div class="stat-card glass-card shadow-blue">
-                        <h3>Elmas</h3>
-                        <div class="stat-value text-blue" id="diamond-balance">0</div>
-                        <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="diamond" class="stat-icon">
-                    </div>
-                </div>
 
                 <div class="action-card glass-card">
                     <h3>👤 Mənim Profilim</h3>
