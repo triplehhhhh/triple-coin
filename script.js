@@ -274,11 +274,16 @@ function updateUIWithUserData() {
     if (!currentUserData) return;
     
     const userName = currentUserData.displayName || currentUserData.email?.split('@')[0] || 'İstifadəçi';
-    document.getElementById('user-id-display').textContent = `${userName} (ID: #${currentUserData.id})`;
+    const userIdDisplay = document.getElementById('user-id-display');
+    if (userIdDisplay) userIdDisplay.textContent = `${userName} (ID: #${currentUserData.id})`;
     
-    document.getElementById('coin-balance').textContent = currentUserData.coins;
-    document.getElementById('diamond-balance').textContent = currentUserData.diamonds;
-    document.getElementById('shop-coin-balance').textContent = currentUserData.coins;
+    const coinBalanceEl = document.getElementById('coin-balance');
+    const diamondBalanceEl = document.getElementById('diamond-balance');
+    const shopCoinBalanceEl = document.getElementById('shop-coin-balance');
+
+    if (coinBalanceEl) coinBalanceEl.textContent = currentUserData.coins;
+    if (diamondBalanceEl) diamondBalanceEl.textContent = currentUserData.diamonds;
+    if (shopCoinBalanceEl) shopCoinBalanceEl.textContent = currentUserData.coins;
 
     // Profile fields
     const profileNameInput = document.getElementById('profile-name-input');
@@ -593,17 +598,26 @@ function switchMainTab(tabId, navElement) {
     
     // Update nav active state
     document.querySelectorAll('.bottom-nav .nav-item').forEach(ni => ni.classList.remove('active'));
-    if (navElement) navElement.classList.add('active');
+    
+    if (navElement) {
+        navElement.classList.add('active');
+    } else {
+        // Automatically find and highlight the corresponding bottom nav item
+        const targetNav = Array.from(document.querySelectorAll('.bottom-nav .nav-item')).find(item => {
+            return item.getAttribute('onclick')?.includes(tabId);
+        });
+        if (targetNav) targetNav.classList.add('active');
+    }
 
     // Tab specific loads
-    if (tabId === 'tab-coin') {
-        loadLeaderboard();
-    } else if (tabId === 'tab-profile') {
+    if (tabId === 'tab-profile') {
         updateUIWithUserData();
     } else if (tabId === 'tab-elmas') {
         if (auth.currentUser) loadUserHistory(auth.currentUser.uid);
     } else if (tabId === 'tab-main-menu') {
         loadClans(); // Load general clans
+    } else if (tabId === 'tab-tournaments') {
+        loadLeaderboard(); // Load ranking list on the tournaments section
     }
 }
 
@@ -851,17 +865,47 @@ async function loadSponsors() {
             
             const profileImg = data.photoURL || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
 
+            // Build Social Network Button
+            let socialBtn = '';
+            if (data.socialLink && data.socialPlatform) {
+                let icon = '📱';
+                if (data.socialPlatform === 'instagram') icon = '📸';
+                if (data.socialPlatform === 'telegram') icon = '✈️';
+                if (data.socialPlatform === 'youtube') icon = '🎥';
+                if (data.socialPlatform === 'tiktok') icon = '🎵';
+                
+                const platName = data.socialPlatform.charAt(0).toUpperCase() + data.socialPlatform.slice(1);
+                socialBtn = `<button class="secondary-btn" style="flex:1; min-width:80px; padding:8px; border-color:#e040fb; color:#e040fb; font-size:0.8rem; font-weight:bold; text-align:center;" onclick="window.open('${data.socialLink}', '_blank')">${icon} ${platName}</button>`;
+            }
+            
+            // Build WhatsApp Button with clean redirect
+            let whatsappBtn = '';
+            if (data.whatsapp) {
+                const cleanNum = data.whatsapp.replace(/\D/g, ''); // leaves only digits
+                whatsappBtn = `<button class="secondary-btn" style="flex:1; min-width:80px; padding:8px; border-color:#25d366; color:#25d366; font-size:0.8rem; font-weight:bold; text-align:center; display:flex; align-items:center; justify-content:center; gap:5px;" onclick="window.open('https://wa.me/${cleanNum}', '_blank')">💬 WhatsApp</button>`;
+            }
+
+            // Beautiful responsive container
+            li.style.flexDirection = 'column';
+            li.style.alignItems = 'stretch';
+            li.style.gap = '10px';
+            li.style.padding = '15px';
+
             li.innerHTML = `
-                <div style="display:flex; align-items:center;">
-                    <img src="${profileImg}" style="width:55px; height:55px; margin-right:15px; border-radius:50%; object-fit:cover; background-color:white; padding:2px; border: 2px solid var(--success); box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
-                    <div style="text-align:left;">
-                        <strong>${data.name}</strong>
-                        <br><small style="color:var(--success);">${data.service}</small>
+                <div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
+                    <div style="display:flex; align-items:center;">
+                        <img src="${profileImg}" style="width:55px; height:55px; margin-right:15px; border-radius:50%; object-fit:cover; background-color:white; padding:2px; border: 2px solid var(--success); box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                        <div style="text-align:left;">
+                            <strong style="font-size:1.05rem;">${data.name}</strong>
+                            <br><small style="color:var(--success); font-weight:500;">${data.service}</small>
+                        </div>
                     </div>
+                    ${isAdmin() ? `<button onclick="deleteSponsor('${sid}')" style="background:rgba(255,0,0,0.2); border:none; color:#ff4d4d; cursor:pointer; padding:6px 12px; border-radius:8px; font-weight:bold; font-size:0.75rem;">Sil</button>` : ''}
                 </div>
-                <div style="display:flex; gap:10px; align-items:center;">
-                    <button class="secondary-btn" style="width:auto; padding:5px 15px; border-color:var(--success); color:var(--success);" onclick="window.open('${data.link}', '_blank')">Əlaqə</button>
-                    ${isAdmin() ? `<button onclick="deleteSponsor('${sid}')" style="background:rgba(255,0,0,0.2); border:none; color:#ff4d4d; cursor:pointer; padding:5px 10px; border-radius:5px;">Sil</button>` : ''}
+                <div style="display:flex; gap:8px; width:100%; margin-top:5px; flex-wrap:wrap;">
+                    <button class="secondary-btn" style="flex:1; min-width:80px; padding:8px; border-color:var(--success); color:var(--success); font-size:0.8rem; text-align:center; font-weight:bold;" onclick="window.open('${data.link}', '_blank')">🌐 Sayt / Kanal</button>
+                    ${socialBtn}
+                    ${whatsappBtn}
                 </div>
             `;
             listEl.appendChild(li);
@@ -888,11 +932,17 @@ if (adminAddSponsorBtn) {
         const serviceSelect = document.getElementById('sponsor-service');
         const linkInput = document.getElementById('sponsor-link');
         const photoInput = document.getElementById('sponsor-photo');
+        const socialPlatformSelect = document.getElementById('sponsor-social-platform');
+        const socialLinkInput = document.getElementById('sponsor-social-link');
+        const whatsappInput = document.getElementById('sponsor-whatsapp');
 
         const name = nameInput.value.trim();
         const service = serviceSelect.value;
         const link = linkInput.value.trim();
         const photoURL = photoInput.value.trim();
+        const socialPlatform = socialPlatformSelect.value;
+        const socialLink = socialLinkInput.value.trim();
+        const whatsapp = whatsappInput.value.trim();
 
         if (!isAdmin()) return;
         if (!name || !link) return showToast('Ad və link mütləqdir!', true);
@@ -906,12 +956,17 @@ if (adminAddSponsorBtn) {
                 service: service,
                 link: link,
                 photoURL: photoURL,
+                socialPlatform: socialPlatform,
+                socialLink: socialLink,
+                whatsapp: whatsapp,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
             showToast('✅ Sponsor əlavə edildi!');
             nameInput.value = '';
             linkInput.value = '';
             photoInput.value = '';
+            socialLinkInput.value = '';
+            whatsappInput.value = '';
             loadSponsors();
         } catch(e) {
             showToast('Xəta!', true);

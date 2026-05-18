@@ -87,57 +87,6 @@
                 </div>
             </header>
 
-            <!-- TAB 1: COIN -->
-            <div id="tab-coin" class="section-view active">
-                <div class="stats-grid">
-                    <div class="stat-card glass-card">
-                        <h3>Coin Balansı</h3>
-                        <div class="stat-value text-gold" id="coin-balance">0</div>
-                        <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin" class="stat-icon">
-                    </div>
-                    <div class="stat-card glass-card shadow-blue">
-                        <h3>Elmas</h3>
-                        <div class="stat-value text-blue" id="diamond-balance">0</div>
-                        <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="diamond" class="stat-icon">
-                    </div>
-                </div>
-
-                <div class="dashboard-actions">
-                    <!-- Converter Section -->
-                    <div class="action-card glass-card">
-                        <h3>🔄 Elmas Hesablayıcı</h3>
-                        <p>Coinlərinizin neçə elmas etdiyinə baxın. (10 Coin = 1 Elmas)</p>
-                        <div class="input-row">
-                            <input type="number" id="convert-coin-input" placeholder="Coin miqdarı (Məs: 4500)" autocomplete="off">
-                            <input type="text" id="convert-diamond-output" placeholder="= 0 Elmas" disabled style="background: rgba(0,0,0,0.5); width: 40%; text-align: center; color: var(--secondary); font-weight: bold;">
-                        </div>
-                    </div>
-
-                    <!-- Redeem Code Section -->
-                    <div class="action-card glass-card">
-                        <h3>Redeem Kod</h3>
-                        <p>Coin qazanmaq üçün xüsusi kodu bura yazın.</p>
-                        <div class="input-row">
-                            <input type="text" id="redeem-code-input" placeholder="Kodu daxil edin" autocomplete="off">
-                            <button id="redeem-btn" class="primary-btn">Təsdiqlə</button>
-                        </div>
-                        <div id="redeem-message"></div>
-                    </div>
-
-
-                </div>
-                
-                <!-- Duelo Section moved to Main Menu -->
-
-                <!-- Leaderboard Section -->
-                <div class="action-card glass-card" style="margin-top: 20px;">
-                    <h3>🏆 Coin Sıralaması</h3>
-                    <p style="font-size: 0.8rem; opacity: 0.7;">Ən çox coin toplayan istifadəçilər</p>
-                    <ul class="leaderboard-list" id="leaderboard-list">
-                        <li style="text-align: center; opacity: 0.5;">Yüklənir...</li>
-                    </ul>
-                </div>
-            </div>
 
             <!-- TAB 2: ANA MENYU (Central FAB Content) -->
             <div id="tab-main-menu" class="section-view">
@@ -153,12 +102,12 @@
                     <div class="clan-y-container">
                         <!-- SVG Connecting Lines -->
                         <svg class="clan-connections-svg" viewBox="0 0 350 380">
-                            <!-- Top to Center (Harbinger to Triple H) -->
-                            <line x1="175" y1="20" x2="175" y2="190" stroke="#00d2ff" stroke-width="5" stroke-linecap="round" />
-                            <!-- Center to Bottom Left (Triple H to Heaven) -->
-                            <line x1="175" y1="190" x2="50" y2="330" stroke="#e040fb" stroke-width="5" stroke-linecap="round" />
-                            <!-- Center to Bottom Right (Triple H to Hell) -->
-                            <line x1="175" y1="190" x2="300" y2="330" stroke="#ff5252" stroke-width="5" stroke-linecap="round" />
+                            <!-- Center to Top Left (Triple H to Hell) -->
+                            <line x1="175" y1="190" x2="50" y2="50" stroke="#ff5252" stroke-width="5" stroke-linecap="round" />
+                            <!-- Center to Top Right (Triple H to Heaven) -->
+                            <line x1="175" y1="190" x2="300" y2="50" stroke="#e040fb" stroke-width="5" stroke-linecap="round" />
+                            <!-- Center to Bottom (Triple H to Harbinger) -->
+                            <line x1="175" y1="190" x2="175" y2="330" stroke="#00d2ff" stroke-width="5" stroke-linecap="round" />
                             
                             <defs>
                                 <linearGradient id="grad-top" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -176,7 +125,7 @@
                             </defs>
                         </svg>
 
-                        <!-- Harbinger (Top) -->
+                        <!-- Harbinger (Bottom - Aşağısında) -->
                         <div class="clan-node-v2 node-v2-harbinger" onclick="openClanDetails('H HARBİNGER')">
                             <img src="harbinger.png" alt="Harbinger">
                         </div>
@@ -186,12 +135,12 @@
                             <img src="klan_logo.png" alt="Triple H">
                         </div>
 
-                        <!-- Heaven (Bottom Left) -->
+                        <!-- Heaven (Top Right - Sağında) -->
                         <div class="clan-node-v2 node-v2-heaven" onclick="openClanDetails('H HEAVEN')">
                             <img src="heaven.png" alt="Heaven">
                         </div>
 
-                        <!-- Hell (Bottom Right) -->
+                        <!-- Hell (Top Left - Solunda) -->
                         <div class="clan-node-v2 node-v2-hell" onclick="openClanDetails('H HELL')">
                             <img src="hell.png" alt="Hell">
                         </div>
@@ -200,7 +149,7 @@
             </div>
 
             <!-- TAB 3: TURNUVA -->
-            <div id="tab-tournaments" class="section-view">
+            <div id="tab-tournaments" class="section-view active">
                 <!-- Admin: Turnuva İdarəsi -->
                 <div class="action-card glass-card" id="admin-tournament-panel" style="display: none; border: 1px solid var(--gold); margin-bottom:20px;">
                     <h3>👑 Admin: Turnuva İdarəsi</h3>
@@ -245,6 +194,15 @@
                         Oda ID: <strong class="text-gold" id="parkour-room-id">Gizlidir</strong><br>
                         Şifrə: <strong class="text-gold" id="parkour-room-pass">Gizlidir</strong>
                     </div>
+                </div>
+
+                <!-- Coin Sıralaması (Moved to Tournaments) -->
+                <div class="action-card glass-card" style="margin-top: 20px;">
+                    <h3>🏆 Coin Sıralaması</h3>
+                    <p style="font-size: 0.8rem; opacity: 0.7;">Ən çox coin toplayan istifadəçilər</p>
+                    <ul class="leaderboard-list" id="leaderboard-list">
+                        <li style="text-align: center; opacity: 0.5;">Yüklənir...</li>
+                    </ul>
                 </div>
             </div>
 
@@ -322,6 +280,16 @@
 
             <!-- TAB 5: ELMAS (Shop integrated) -->
             <div id="tab-elmas" class="section-view">
+                <!-- Converter Section (Diamond Calculator) -->
+                <div class="action-card glass-card" style="margin-bottom: 20px;">
+                    <h3>🔄 Elmas Hesablayıcı</h3>
+                    <p>Coinlərinizin neçə elmas etdiyinə baxın. (10 Coin = 1 Elmas)</p>
+                    <div class="input-row">
+                        <input type="number" id="convert-coin-input" placeholder="Coin miqdarı (Məs: 4500)" autocomplete="off">
+                        <input type="text" id="convert-diamond-output" placeholder="= 0 Elmas" disabled style="background: rgba(0,0,0,0.5); width: 40%; text-align: center; color: var(--secondary); font-weight: bold;">
+                    </div>
+                </div>
+
                 <!-- DIAMOND PACKS -->
                 <div class="shop-grid" style="grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 5px;">
                     <div class="shop-item glass-card" style="padding: 15px;">
@@ -402,6 +370,20 @@
 
             <!-- TAB 6: PROFIL -->
             <div id="tab-profile" class="section-view">
+                <!-- Stats Grid (Coin and Diamond Balance - Moved to Profile) -->
+                <div class="stats-grid" style="margin-bottom: 20px;">
+                    <div class="stat-card glass-card">
+                        <h3>Coin Balansı</h3>
+                        <div class="stat-value text-gold" id="coin-balance">0</div>
+                        <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin" class="stat-icon">
+                    </div>
+                    <div class="stat-card glass-card shadow-blue">
+                        <h3>Elmas</h3>
+                        <div class="stat-value text-blue" id="diamond-balance">0</div>
+                        <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="diamond" class="stat-icon">
+                    </div>
+                </div>
+
                 <div class="action-card glass-card">
                     <h3>👤 Mənim Profilim</h3>
                     <div style="display: flex; flex-direction: column; align-items: center; margin-top: 20px;">
@@ -421,6 +403,17 @@
 
                         <button class="primary-btn" id="save-profile-btn" style="margin-top: 10px;">Məlumatları Yadda Saxla</button>
                     </div>
+                </div>
+
+                <!-- Redeem Code Section (Moved to Profile) -->
+                <div class="action-card glass-card" style="margin-top: 16px;">
+                    <h3>Redeem Kod</h3>
+                    <p>Coin qazanmaq üçün xüsusi kodu bura yazın.</p>
+                    <div class="input-row">
+                        <input type="text" id="redeem-code-input" placeholder="Kodu daxil edin" autocomplete="off">
+                        <button id="redeem-btn" class="primary-btn">Təsdiqlə</button>
+                    </div>
+                    <div id="redeem-message"></div>
                 </div>
 
                 <!-- Admin: Redeem Generator -->
@@ -481,20 +474,85 @@
                         <label for="sponsor-photo">Profil Şəkli Linki</label>
                         <input type="url" id="sponsor-photo" placeholder="https://... şəkil linki" autocomplete="off">
                     </div>
+                    <div class="input-group">
+                        <label for="sponsor-social-platform">Sosyal Şəbəkə</label>
+                        <select id="sponsor-social-platform" style="width:100%; padding:14px 16px; border:1px solid rgba(255,255,255,0.08); border-radius:12px; background:rgba(255,255,255,0.04); color:#e8e8f0; font-family:'Outfit',sans-serif; outline:none;">
+                            <option value="instagram">Instagram</option>
+                            <option value="telegram">Telegram</option>
+                            <option value="youtube">YouTube</option>
+                            <option value="tiktok">TikTok</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="sponsor-social-link">Sosyal Şəbəkə Linki</label>
+                        <input type="url" id="sponsor-social-link" placeholder="https://..." autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                        <label for="sponsor-whatsapp">WhatsApp Nömrəsi</label>
+                        <input type="text" id="sponsor-whatsapp" placeholder="Məs: +99450XXXXXXX" autocomplete="off">
+                    </div>
                     <button class="primary-btn" id="admin-add-sponsor-btn" style="background: var(--success); color: #000;">Sponsoru Əlavə Et</button>
+                </div>
+            </div>
+
+            <!-- TAB 8: QAYDALAR -->
+            <div id="tab-rules" class="section-view">
+                <div class="action-card glass-card" style="border-left: 4px solid var(--primary); margin-bottom: 15px;">
+                    <h2 style="font-size: 1.3rem; margin-bottom: 5px; color: #fff;">📜 Ümumi Qaydalar</h2>
+                    <p style="font-size: 0.85rem; opacity: 0.8; line-height: 1.5;">Tripl H Coin platformasında xoşbəxt və ədalətli mühit saxlamaq üçün hər bir istifadəçi aşağıdakı qaydalara əməl etməlidir.</p>
+                </div>
+
+                <div class="action-card glass-card" style="margin-bottom: 15px;">
+                    <h3 style="color: var(--gold); font-size: 1.1rem; display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                        <span>🔫</span> Turnir və Otaq Qaydaları
+                    </h3>
+                    <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem; opacity: 0.9;">
+                        <li style="background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; border-left: 2px solid var(--gold);">
+                            <strong>1. Ədalətli Oyun (Fair Play):</strong> Bütün turnirlərdə və ödüllü otaqlarda hər hansı bir hack, script, makro və ya üçüncü tərəf proqramlarının istifadəsi qəti qadağandır. Aşkarlanarsa, hesabınız dərhal silinəcəkdir.
+                        </li>
+                        <li style="background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; border-left: 2px solid var(--gold);">
+                            <strong>2. Komanda Qadağası (Teaming):</strong> Təkli (Solo) BR turnirlərində rəqiblərlə komanda olmaq (teaming) qəti qadağandır. Bu hal müəyyən edildikdə turnirdən kənarlaşdırılacaqsınız və heç bir mükafat verilməyəcək.
+                        </li>
+                        <li style="background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; border-left: 2px solid var(--gold);">
+                            <strong>3. Vaxtında Qatılmaq:</strong> Otaq ID və Şifrəsi yalnız turnir vaxtı aktiv olur. Təyin olunmuş vaxtdan gecikən oyunçular otağa buraxılmır və coin geri qaytarılmır.
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="action-card glass-card" style="margin-bottom: 15px;">
+                    <h3 style="color: var(--secondary); font-size: 1.1rem; display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                        <span>🪙</span> Coin və Mağaza Qaydaları
+                    </h3>
+                    <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem; opacity: 0.9;">
+                        <li style="background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; border-left: 2px solid var(--secondary);">
+                            <strong>1. Balans Təhlükəsizliyi:</strong> Qazanılan coinlər geri nağdlaşdırıla bilməz, yalnız mağazada (Shop) Elmas və ya VIP Üyelik sifarişləri üçün istifadə oluna bilər.
+                        </li>
+                        <li style="background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; border-left: 2px solid var(--secondary);">
+                            <strong>2. ID Düzgünlüyü (UID):</strong> Elmas sifarişi edərkən Free Fire Oyuncu ID-nizi (UID) tam və doğru daxil etdiyinizdən əmin olun. Yanlış ID-yə göndərilən sifarişlərdə məsuliyyət oyunçunun üzərinə düşür.
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="action-card glass-card" style="background: linear-gradient(135deg, rgba(255, 82, 82, 0.15) 0%, rgba(255, 82, 82, 0.02) 100%); border: 1px solid rgba(255, 82, 82, 0.2);">
+                    <h3 style="color: #ff5252; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <span>🚫</span> Cəzalandırma Siyasəti
+                    </h3>
+                    <p style="font-size: 0.85rem; opacity: 0.85; line-height: 1.5; margin: 0;">
+                        Qaydaları pozan istifadəçilərin coinləri sıfırlanacaq, turnirlərdən birdəfəlik uzaqlaşdırılacaq və cihazları platformadan bloklanacaqdır. Hər kəsə uğurlar və ədalətli oyunlar arzulayırıq!
+                    </p>
                 </div>
             </div>
 
             <!-- Bottom Navigation Bar -->
             <nav class="bottom-nav">
-                <div class="nav-item active" onclick="switchMainTab('tab-coin', this)">
-                    <span>🏠</span><small>Ana Səhifə</small>
-                </div>
-                <div class="nav-item" onclick="switchMainTab('tab-tournaments', this)">
+                <div class="nav-item active" onclick="switchMainTab('tab-tournaments', this)">
                     <span>🏆</span><small>Turnuva</small>
                 </div>
                 <div class="nav-item" onclick="switchMainTab('tab-streamers', this)">
                     <span>🎥</span><small>Yayın</small>
+                </div>
+                <div class="nav-item" onclick="switchMainTab('tab-elmas', this)">
+                    <span>🛍️</span><small>Shop</small>
                 </div>
                 
                 <!-- Bulging Central Button -->
@@ -502,14 +560,14 @@
                     <span>H</span>
                 </div>
 
-                <div class="nav-item" onclick="switchMainTab('tab-elmas', this)">
-                    <span>🛍️</span><small>Shop</small>
+                <div class="nav-item" onclick="switchMainTab('tab-sponsors', this)">
+                    <span>🤝</span><small>Sponsor</small>
+                </div>
+                <div class="nav-item" onclick="switchMainTab('tab-rules', this)">
+                    <span>📜</span><small>Qaydalar</small>
                 </div>
                 <div class="nav-item" onclick="switchMainTab('tab-profile', this)">
                     <span>👤</span><small>Profil</small>
-                </div>
-                <div class="nav-item" onclick="switchMainTab('tab-sponsors', this)">
-                    <span>🤝</span><small>Sponsor</small>
                 </div>
             </nav>
         </div>
