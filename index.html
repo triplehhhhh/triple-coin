@@ -89,7 +89,7 @@
 
 
             <!-- TAB 2: ANA MENYU (Central FAB Content) -->
-            <div id="tab-main-menu" class="section-view">
+            <div id="tab-main-menu" class="section-view active">
                 <!-- Stats Grid (Coin and Diamond Balance - Moved to Central H Menu) -->
                 <div class="stats-grid" style="margin-bottom: 20px;">
                     <div class="stat-card glass-card">
@@ -100,7 +100,7 @@
                     <div class="stat-card glass-card shadow-blue">
                         <h3>Elmas</h3>
                         <div class="stat-value text-blue" id="diamond-balance">0</div>
-                        <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="diamond" class="stat-icon">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1865/1865324.png" alt="diamond" class="stat-icon">
                     </div>
                 </div>
 
@@ -110,10 +110,19 @@
                     <p>Digər oyunçularla rəqabətə girərək coinlərinizi artırın!</p>
                     <button class="primary-btn" style="background: rgba(255,50,50,0.8); margin-top:10px;" onclick="showToast('Bu funksiya tezliklə aktiv olacaq!', true)">Rəqib Axtar</button>
                 </div>
+
+                <!-- Coin Sıralaması (Moved here from Tournaments) -->
+                <div class="action-card glass-card" style="margin-top: 20px;">
+                    <h3>🏆 Coin Sıralaması</h3>
+                    <p style="font-size: 0.8rem; opacity: 0.7;">Ən çox coin toplayan istifadəçilər</p>
+                    <ul class="leaderboard-list" id="leaderboard-list">
+                        <li style="text-align: center; opacity: 0.5;">Yüklənir...</li>
+                    </ul>
+                </div>
             </div>
 
             <!-- TAB 3: TURNUVA -->
-            <div id="tab-tournaments" class="section-view active">
+            <div id="tab-tournaments" class="section-view">
                 <!-- Admin: Turnuva İdarəsi -->
                 <div class="action-card glass-card" id="admin-tournament-panel" style="display: none; border: 1px solid var(--gold); margin-bottom:20px;">
                     <h3>👑 Admin: Turnuva İdarəsi</h3>
@@ -158,15 +167,6 @@
                         Oda ID: <strong class="text-gold" id="parkour-room-id">Gizlidir</strong><br>
                         Şifrə: <strong class="text-gold" id="parkour-room-pass">Gizlidir</strong>
                     </div>
-                </div>
-
-                <!-- Coin Sıralaması (Moved to Tournaments) -->
-                <div class="action-card glass-card" style="margin-top: 20px;">
-                    <h3>🏆 Coin Sıralaması</h3>
-                    <p style="font-size: 0.8rem; opacity: 0.7;">Ən çox coin toplayan istifadəçilər</p>
-                    <ul class="leaderboard-list" id="leaderboard-list">
-                        <li style="text-align: center; opacity: 0.5;">Yüklənir...</li>
-                    </ul>
                 </div>
             </div>
 
@@ -244,50 +244,41 @@
 
             <!-- TAB 5: ELMAS (Shop integrated) -->
             <div id="tab-elmas" class="section-view">
-                <!-- Converter Section (Diamond Calculator) -->
-                <div class="action-card glass-card" style="margin-bottom: 20px;">
-                    <h3>🔄 Elmas Hesablayıcı</h3>
-                    <p>Coinlərinizin neçə elmas etdiyinə baxın. (10 Coin = 1 Elmas)</p>
-                    <div class="input-row">
-                        <input type="number" id="convert-coin-input" placeholder="Coin miqdarı (Məs: 4500)" autocomplete="off">
-                        <input type="text" id="convert-diamond-output" placeholder="= 0 Elmas" disabled style="background: rgba(0,0,0,0.5); width: 40%; text-align: center; color: var(--secondary); font-weight: bold;">
-                    </div>
-                </div>
 
                 <!-- DIAMOND PACKS -->
                 <div class="shop-grid" style="grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 5px;">
                     <div class="shop-item glass-card" style="padding: 15px;">
-                        <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="110 💎" style="width: 50px; height: 50px; margin-bottom: 10px;">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1865/1865324.png" alt="110 💎" style="width: 50px; height: 50px; margin-bottom: 10px;">
                         <h3 style="font-size: 0.9rem;">110 Elmas</h3>
                         <div class="price" style="font-size: 0.9rem;"><span>1100</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin" style="width:14px;"></div>
                         <button class="buy-btn" data-diamonds="110" data-cost="1100" style="padding: 8px; font-size: 0.8rem;">Satın Al</button>
                     </div>
                     <div class="shop-item glass-card" style="padding: 15px;">
-                        <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="220 💎" style="width: 50px; height: 50px; margin-bottom: 10px;">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1865/1865324.png" alt="220 💎" style="width: 50px; height: 50px; margin-bottom: 10px;">
                         <h3 style="font-size: 0.9rem;">220 Elmas</h3>
                         <div class="price" style="font-size: 0.9rem;"><span>2200</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin" style="width:14px;"></div>
                         <button class="buy-btn" data-diamonds="220" data-cost="2200" style="padding: 8px; font-size: 0.8rem;">Satın Al</button>
                     </div>
                     <div class="shop-item glass-card" style="padding: 15px;">
-                        <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="341 💎" style="width: 50px; height: 50px; margin-bottom: 10px;">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1865/1865324.png" alt="341 💎" style="width: 50px; height: 50px; margin-bottom: 10px;">
                         <h3 style="font-size: 0.9rem;">341 Elmas</h3>
                         <div class="price" style="font-size: 0.9rem;"><span>3410</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin" style="width:14px;"></div>
                         <button class="buy-btn" data-diamonds="341" data-cost="3410" style="padding: 8px; font-size: 0.8rem;">Satın Al</button>
                     </div>
                     <div class="shop-item glass-card" style="padding: 15px;">
-                        <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="572 💎" style="width: 50px; height: 50px; margin-bottom: 10px;">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1865/1865324.png" alt="572 💎" style="width: 50px; height: 50px; margin-bottom: 10px;">
                         <h3 style="font-size: 0.9rem;">572 Elmas</h3>
                         <div class="price" style="font-size: 0.9rem;"><span>5720</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin" style="width:14px;"></div>
                         <button class="buy-btn" data-diamonds="572" data-cost="5720" style="padding: 8px; font-size: 0.8rem;">Satın Al</button>
                     </div>
                     <div class="shop-item glass-card" style="padding: 15px;">
-                        <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="1166 💎" style="width: 50px; height: 50px; margin-bottom: 10px;">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1865/1865324.png" alt="1166 💎" style="width: 50px; height: 50px; margin-bottom: 10px;">
                         <h3 style="font-size: 0.9rem;">1166 Elmas</h3>
                         <div class="price" style="font-size: 0.9rem;"><span>11660</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin" style="width:14px;"></div>
                         <button class="buy-btn" data-diamonds="1166" data-cost="11660" style="padding: 8px; font-size: 0.8rem;">Satın Al</button>
                     </div>
                     <div class="shop-item glass-card" style="padding: 15px;">
-                        <img src="https://cdn-icons-png.flaticon.com/512/2875/2875887.png" alt="2398 💎" style="width: 50px; height: 50px; margin-bottom: 10px;">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1865/1865324.png" alt="2398 💎" style="width: 50px; height: 50px; margin-bottom: 10px;">
                         <h3 style="font-size: 0.9rem;">2398 Elmas</h3>
                         <div class="price" style="font-size: 0.9rem;"><span>23980</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" alt="coin" style="width:14px;"></div>
                         <button class="buy-btn" data-diamonds="2398" data-cost="23980" style="padding: 8px; font-size: 0.8rem;">Satın Al</button>
@@ -318,6 +309,19 @@
                             <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
                                 <div class="price" style="margin: 0; font-size: 1rem;"><span>3000</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" style="width: 14px;"></div>
                                 <button class="buy-btn" data-diamonds="Həftəlik" data-cost="3000" style="padding: 5px 15px; font-size: 0.8rem; width: auto; background: var(--gold); color:#000;">Al</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Monthly Subscription Pack -->
+                    <div class="shop-item glass-card" style="border: 1px solid #00e676; background: rgba(0, 230, 118, 0.05); padding: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="text-align: left;">
+                                <h4 style="margin: 0; font-size: 1rem; color: #00e676;">Aylıq Üyelik</h4>
+                                <p style="font-size: 0.75rem; opacity: 0.7; margin: 2px 0 0 0;">30 Günlük Premium Paket</p>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
+                                <div class="price" style="margin: 0; font-size: 1rem;"><span>15000</span> <img src="https://cdn-icons-png.flaticon.com/512/2586/2586712.png" style="width: 14px;"></div>
+                                <button class="buy-btn" data-diamonds="Aylıq" data-cost="15000" style="padding: 5px 15px; font-size: 0.8rem; width: auto; background: #00e676; color:#000;">Al</button>
                             </div>
                         </div>
                     </div>
@@ -496,7 +500,7 @@
 
             <!-- Bottom Navigation Bar -->
             <nav class="bottom-nav">
-                <div class="nav-item active" onclick="switchMainTab('tab-tournaments', this)">
+                <div class="nav-item" onclick="switchMainTab('tab-tournaments', this)">
                     <span>🏆</span><small>Turnuva</small>
                 </div>
                 <div class="nav-item" onclick="switchMainTab('tab-streamers', this)">
@@ -507,7 +511,7 @@
                 </div>
                 
                 <!-- Bulging Central Button -->
-                <div class="nav-item nav-fab" onclick="switchMainTab('tab-main-menu', this)">
+                <div class="nav-item nav-fab active" onclick="switchMainTab('tab-main-menu', this)">
                     <span>H</span>
                 </div>
 

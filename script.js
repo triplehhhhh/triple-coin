@@ -105,10 +105,6 @@ const registerBtn = document.getElementById('register-btn');
 const loginStatus = document.getElementById('login-status');
 const regStatus = document.getElementById('reg-status');
 
-const convertCoinInput = document.getElementById('convert-coin-input');
-const convertDiamondOutput = document.getElementById('convert-diamond-output');
-const convertBtn = document.getElementById('convert-btn');
-
 const orderModal = document.getElementById('order-modal');
 const modalCancel = document.getElementById('modal-cancel');
 const modalConfirm = document.getElementById('modal-confirm');
@@ -246,6 +242,7 @@ auth.onAuthStateChanged(async (user) => {
         await fetchUserData(user.uid);
         loadUserHistory(user.uid);
         switchView('dashboard-view');
+        switchMainTab('tab-main-menu');
     } else {
         currentUserData = null;
         switchView('auth-view');
@@ -396,18 +393,6 @@ document.getElementById('redeem-btn').addEventListener('click', async () => {
     }
 });
 
-// --- CONVERTER SYSTEM --- //
-
-convertCoinInput.addEventListener('input', (e) => {
-    let coins = parseInt(e.target.value);
-    if (!coins || coins < 10) {
-        convertDiamondOutput.value = "= 0 Elmas";
-        return;
-    }
-    let diamonds = Math.floor(coins / 10);
-    convertDiamondOutput.value = `= ${diamonds} Elmas`;
-});
-
 // --- FREESHOP & ORDERS --- //
 
 document.querySelectorAll('.buy-btn').forEach(btn => {
@@ -417,7 +402,8 @@ document.querySelectorAll('.buy-btn').forEach(btn => {
             return;
         }
 
-        const diamondsAmount = parseInt(e.target.getAttribute('data-diamonds'));
+        const diamondsRaw = e.target.getAttribute('data-diamonds');
+        const diamondsAmount = isNaN(diamondsRaw) ? diamondsRaw : parseInt(diamondsRaw);
         const coinCost = parseInt(e.target.getAttribute('data-cost'));
 
         if (currentUserData.coins < coinCost) {
@@ -625,10 +611,11 @@ function switchMainTab(tabId, navElement) {
     // Tab specific loads
     if (tabId === 'tab-profile' || tabId === 'tab-main-menu') {
         updateUIWithUserData();
+        if (tabId === 'tab-main-menu') {
+            loadLeaderboard();
+        }
     } else if (tabId === 'tab-elmas') {
         if (auth.currentUser) loadUserHistory(auth.currentUser.uid);
-    } else if (tabId === 'tab-tournaments') {
-        loadLeaderboard(); // Load ranking list on the tournaments section
     }
 }
 
