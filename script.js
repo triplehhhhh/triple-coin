@@ -110,6 +110,16 @@ const modalCancel = document.getElementById('modal-cancel');
 const modalConfirm = document.getElementById('modal-confirm');
 const playerUidInput = document.getElementById('player-uid');
 
+const dueloModal = document.getElementById('duelo-modal');
+const dueloModalFormContent = document.getElementById('duelo-modal-form-content');
+const dueloModalSuccessContent = document.getElementById('duelo-modal-success-content');
+const dueloRegisterBtn = document.getElementById('duelo-register-btn');
+const dueloPlayerUidInput = document.getElementById('duelo-player-uid');
+const dueloModalCancel = document.getElementById('duelo-modal-cancel');
+const dueloModalConfirm = document.getElementById('duelo-modal-confirm');
+const dueloGeneratedCode = document.getElementById('duelo-generated-code');
+const dueloSuccessCloseBtn = document.getElementById('duelo-success-close-btn');
+
 let pendingOrder = null;
 
 // --- UI Navigation --- //
@@ -458,17 +468,22 @@ async function loadUserHistory(uid) {
                 dateStr = new Date(order.timestamp.toMillis()).toLocaleString('az-AZ');
             }
             
+            let itemTitle = order.diamonds === 'Düello' ? '⚔️ Düello Qeydiyyatı' : `💎 ${order.diamonds} Elmas`;
             let statusText = order.status === 'pending' ? '⏳ Gözləyir' : '✅ Tamamlandı';
             let statusColor = order.status === 'pending' ? 'var(--primary)' : 'var(--success)';
+            if (order.diamonds === 'Düello') {
+                statusText = '✅ Qeydə Alındı';
+                statusColor = 'var(--success)';
+            }
             
             historyList.innerHTML += `
                 <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 0.85rem; border-left: 3px solid ${statusColor};">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                        <strong>💎 ${order.diamonds} Elmas</strong>
+                        <strong>${itemTitle}</strong>
                         <span style="color: ${statusColor}; font-weight: bold;">${statusText}</span>
                     </div>
                     <div style="color: var(--text-muted); font-size: 0.75rem;">
-                        Oyun ID: ${order.playerUid} | ${dateStr}
+                        Oyun ID: ${order.playerUid} ${order.dueloCode ? `| Kod: ${order.dueloCode}` : ''} | ${dateStr}
                     </div>
                 </div>
             `;
@@ -1580,4 +1595,151 @@ window.deleteRedeemCode = async function(code) {
         showToast("Kod silindi");
         loadAdminRedeems();
     } catch(e) { showToast("Xəta!", true); }
+}
+
+// --- DUEL REGISTRATION SYSTEM --- //
+
+// Helper to generate a random duel code
+function generateRandomDueloCode() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let code = 'VS-';
+    for (let i = 0; i < 6; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code;
+}
+
+// Telegram notification helper for Duelo qeydiyyatı
+function sendDueloTelegramNotification(playerUid, dueloCode) {
+    const botToken1 = "7955618376:AAGwtstbD0qApk9GauBGx0JmmpI4USpMRc4";
+    const botToken2 = "8780015110:AAGauhtjYaeCRbrGOb821u4mtDablK4euQ0";
+    
+    const chatId1 = "8093016770";
+    const chatId2 = "6681584626";
+    
+    const message = `⚔️ YENİ DÜELLO QEYDİYYATI ⚔️\n\n🎮 Oyuncu UID: ${playerUid}\n🔑 Düello Kodu: ${dueloCode}\n💰 Dəyər: 150 Coin\n\nQaydalar:\nVerilən kodu itirdikdə məsuliyət oyunçunun üzərindədir. Bu kod hər bazar 21:00-da duellolar açılacaq, bu kodu duello admininə verərək vs-ə başlaya bilər.`;
+    
+    // Send to Bot 1
+    fetch(`https://api.telegram.org/bot${botToken1}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: chatId1, text: message })
+    }).catch(e => console.error("Telegram Bot 1 xətası (Duelo):", e));
+
+    // Send to Bot 2
+    fetch(`https://api.telegram.org/bot${botToken2}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: chatId2, text: message })
+    }).catch(e => console.error("Telegram Bot 2 xətası (Duelo):", e));
+}
+
+// Click register button -> Open Modal
+if (dueloRegisterBtn) {
+    dueloRegisterBtn.addEventListener('click', () => {
+        if (!currentUserData) {
+            showToast("Baza məlumatı yüklənməyib!", true);
+            return;
+        }
+
+        if (currentUserData.coins < 150) {
+            showToast("Kifayət qədər Coin balansınız yoxdur! (150 Coin lazımdır)", true);
+            return;
+        }
+
+        // Show form layout, hide success layout
+        dueloModalFormContent.style.display = 'block';
+        dueloModalSuccessContent.style.display = 'none';
+        dueloPlayerUidInput.value = '';
+        dueloModal.classList.add('show');
+    });
+}
+
+// Cancel registration -> Close Modal
+if (dueloModalCancel) {
+    dueloModalCancel.addEventListener('click', () => {
+        dueloModal.classList.remove('show');
+    });
+}
+
+// Close success view -> Close Modal
+if (dueloSuccessCloseBtn) {
+    dueloSuccessCloseBtn.addEventListener('click', () => {
+        dueloModal.classList.remove('show');
+    });
+}
+
+// Confirm registration -> Deduct coins, Save to DB, Generate Code, Send Telegram
+if (dueloModalConfirm) {
+    dueloModalConfirm.addEventListener('click', async () => {
+        if (!currentUserData) return;
+
+        const uid = dueloPlayerUidInput.value.trim();
+        if (uid.length < 5) {
+            showToast("Zəhmət olmasa düzgün Oyuncu ID (UID) daxil edin", true);
+            return;
+        }
+
+        if (currentUserData.coins < 150) {
+            showToast("Kifayət qədər Coin balansınız yoxdur!", true);
+            return;
+        }
+
+        // Disable UI controls
+        dueloModalConfirm.disabled = true;
+        dueloModalConfirm.textContent = "Gözləyin...";
+        if (dueloModalCancel) dueloModalCancel.disabled = true;
+
+        try {
+            const randomCode = generateRandomDueloCode();
+
+            // 1. Deduct coins locally and in DB
+            await updateUserData({
+                coins: currentUserData.coins - 150
+            });
+
+            // 2. Add to orders collection as a Duel purchase
+            await db.collection("orders").add({
+                userId: auth.currentUser.uid,
+                userEmail: currentUserData.email,
+                playerUid: uid,
+                diamonds: "Düello", // Flag for Duel registration
+                dueloCode: randomCode,
+                cost: 150,
+                status: "completed",
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            // 3. Send notification to Telegram
+            sendDueloTelegramNotification(uid, randomCode);
+
+            // 4. Reload History
+            loadUserHistory(auth.currentUser.uid);
+
+            // 5. Present success screen with the code
+            dueloGeneratedCode.textContent = randomCode;
+            
+            // Set click-to-copy handler
+            dueloGeneratedCode.onclick = () => {
+                navigator.clipboard.writeText(randomCode).then(() => {
+                    showToast("Kod kopyalandı! 📋");
+                }).catch(() => {
+                    showToast("Kopyalamaq mümkün olmadı", true);
+                });
+            };
+
+            dueloModalFormContent.style.display = 'none';
+            dueloModalSuccessContent.style.display = 'block';
+
+            showToast("✅ Düello qeydiyyatı uğurlu!");
+
+        } catch (e) {
+            console.error("Duelo registration error:", e);
+            showToast("Xəta baş verdi!", true);
+        } finally {
+            dueloModalConfirm.disabled = false;
+            dueloModalConfirm.textContent = "Təsdiq Et (-150 🪙)";
+            if (dueloModalCancel) dueloModalCancel.disabled = false;
+        }
+    });
 }
